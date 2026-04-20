@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>🥛 МОЛОЧНАЯ БИТВА · СПОСОБНОСТИ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #e8f4f8 0%, #d4eaf0 50%, #c5e0e8 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      font-family: 'Segoe UI', 'Courier New', monospace;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.6) 0%, transparent 60%);
+      filter: blur(60px);
+      animation: softGlow 12s infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 70% 60%, rgba(200, 230, 255, 0.5) 0%, transparent 60%);
+      filter: blur(60px);
+      animation: softGlow 15s infinite alternate-reverse;
+    }
+
+    @keyframes softGlow {
+      0% { opacity: 0.4; transform: scale(1); }
+      100% { opacity: 0.8; transform: scale(1.1); }
+    }
+
+    .game-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 450px;
+      height: 100%;
+      max-height: 850px;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 50px;
+      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 20px 50px rgba(0, 40, 60, 0.15), 0 0 40px rgba(200, 230, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 40px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(5px);
+    }
+
+    .health-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .health-icon {
+      font-size: 1.4rem;
+    }
+
+    .health-bar {
+      flex: 1;
+      height: 18px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1.5px solid rgba(100, 160, 200, 0.5);
+    }
+
+    .health-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #6ab0d6, #8ec8e8, #b0ddf0);
+      transition: width 0.2s;
+      box-shadow: 0 0 10px #8ec8e8;
+    }
+
+    .boss-health .health-fill {
+      background: linear-gradient(90deg, #c9a0dc, #dbb5e8, #e8ccf0);
+      box-shadow: 0 0 10px #dbb5e8;
+    }
+
+    .level-badge {
+      background: rgba(150, 200, 230, 0.6);
+      padding: 6px 18px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: #2a5f7a;
+      font-size: 1rem;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      margin: 0 10px;
+    }
+
+    .score {
+      color: #3a7a9a;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1/1.2;
+      background: linear-gradient(180deg, #d4eef5 0%, #c0dde8 50%, #a8ccda 100%);
+      border-radius: 35px;
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 8px 25px rgba(0, 30, 50, 0.15), inset 0 0 40px rgba(200, 230, 255, 0.5);
+      touch-action: none;
+      cursor: crosshair;
+      flex: 1;
+    }
+
+    .bottom-panel {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 15px 10px 5px;
+    }
+
+    .joystick-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 2;
+    }
+
+    .joystick {
+      width: 100px;
+      height: 100px;
+      background: rgba(220, 240, 255, 0.6);
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+      border: 2.5px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 8px 20px rgba(80, 140, 180, 0.15), inset 0 0 25px rgba(255, 255, 255, 0.6);
+      position: relative;
+      touch-action: none;
+    }
+
+    .joystick-knob {
+      width: 45px;
+      height: 45px;
+      background: linear-gradient(145deg, #b0d8f0, #8ec0e0);
+      border-radius: 25px;
+      position: absolute;
+      left: 27px;
+      top: 27px;
+      border: 3px solid #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 20px #aad4f0;
+      touch-action: none;
+      pointer-events: none;
+    }
+
+    .shoot-joystick .joystick-knob {
+      background: linear-gradient(145deg, #f0c0d0, #e0a0b8);
+    }
+
+    .abilities-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .ability-btn {
+      background: linear-gradient(145deg, #d0e0f0, #b0c8e0);
+      border: 2.5px solid #ffffff;
+      border-radius: 40px;
+      padding: 10px 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #2a5f7a;
+      text-align: center;
+      box-shadow: 0 5px 0 #6a8aaa, 0 0 15px #a0c0e0;
+      transition: 0.05s;
+      cursor: pointer;
+      touch-action: manipulation;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ability-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #6a8aaa, 0 0 20px #a0c0e0;
+    }
+
+    .ability-btn.disabled {
+      opacity: 0.5;
+      filter: grayscale(0.5);
+      pointer-events: none;
+    }
+
+    .ability-cooldown {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: #ffd700;
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    .power-active-indicator {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 15px;
+      height: 15px;
+      background: #ffd700;
+      border-radius: 10px;
+      border: 2px solid white;
+      display: none;
+    }
+
+    .power-active .power-active-indicator {
+      display: block;
+    }
+
+    .game-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      background: rgba(200, 220, 240, 0.5);
+      backdrop-filter: blur(15px);
+    }
+
+    .game-card {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 30px 35px;
+      border-radius: 60px;
+      text-align: center;
+      border: 3px solid #c0ddf0;
+      box-shadow: 0 20px 50px rgba(0, 40, 70, 0.2);
+      backdrop-filter: blur(15px);
+      max-width: 320px;
+    }
+
+    .game-card h2 {
+      color: #3a6a8a;
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px #b0d8f0;
+    }
+
+    .game-card p {
+      color: #4a7a9a;
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+    }
+
+    .btn {
+      background: linear-gradient(145deg, #a0cce8, #7ab0d0);
+      border: none;
+      padding: 16px 35px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: white;
+      border-radius: 50px;
+      cursor: pointer;
+      border: 2px solid #d0e8ff;
+      box-shadow: 0 8px 0 #4a7a9a, 0 0 25px #a0cce8;
+      transition: 0.08s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #4a7a9a, 0 0 30px #a0cce8;
+    }
+
+    .start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      background: rgba(220, 240, 255, 0.5);
+      backdrop-filter: blur(12px);
+    }
+
+    .controls-hint {
+      text-align: center;
+      color: #4a7a9a;
+      font-size: 0.7rem;
+      margin-top: 5px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+<div class="game-container">
+  <div class="game-header">
+    <div class="health-section">
+      <span class="health-icon">🥛</span>
+      <div class="health-bar">
+        <div id="playerHealthBar" class="health-fill" style="width: 100%"></div>
+      </div>
+    </div>
+    <div class="level-badge" id="levelDisplay">⭐ ЭПИЧЕСКИЙ БОСС ⭐</div>
+    <div class="health-section boss-health">
+      <div class="health-bar">
+        <div id="bossHealthBar" class="health-fill" style="width: 100%"></div>
+      </div>
+      <span class="health-icon">👾</span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas" width="400" height="500"></canvas>
+
+  <div class="bottom-panel">
+    <div class="joystick-container">
+      <div class="joystick" id="moveJoystick">
+        <div class="joystick-knob" id="moveKnob"></div>
+      </div>
+      <div class="score" id="scoreDisplay">000</div>
+      <div class="joystick shoot-joystick" id="shootJoystick">
+        <div class="joystick-knob" id="shootKnob"></div>
+      </div>
+    </div>
+    <div class="abilities-panel">
+      <div class="ability-btn" id="powerShotBtn">
+        💥 МОЩНЫЙ ВЫСТРЕЛ
+        <div class="ability-cooldown" id="powerShotCd"></div>
+        <div class="power-active-indicator"></div>
+      </div>
+      <div class="ability-btn" id="meleeStrikeBtn">
+        ⚡ УДАР ВБЛИЗИ
+        <div class="ability-cooldown" id="meleeStrikeCd"></div>
+        <div class="power-active-indicator"></div>
+      </div>
+    </div>
+  </div>
+  <div class="controls-hint">← ДВИЖЕНИЕ | СТРЕЛЬБА → | 💥 3с / ⚡ 15с</div>
+</div>
+
+<div class="start-screen" id="startScreen">
+  <div class="game-card">
+    <h2>🥛 МОЛОЧНАЯ БИТВА</h2>
+    <p>ЭПИЧЕСКИЙ БОСС</p>
+    <button class="btn" id="startBtn">СТАРТ</button>
+  </div>
+</div>
+
+<div class="game-overlay" id="gameOverlay">
+  <div class="game-card">
+    <h2 id="gameOverTitle">ИГРА ОКОНЧЕНА</h2>
+    <p id="gameOverMessage">СЧЁТ: 000</p>
+    <button class="btn" id="restartBtn">ЗАНОВО</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const startScreen = document.getElementById('startScreen');
+    const gameOverlay = document.getElementById('gameOverlay');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const playerHealthBar = document.getElementById('playerHealthBar');
+    const bossHealthBar = document.getElementById('bossHealthBar');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const gameOverTitle = document.getElementById('gameOverTitle');
+    const gameOverMessage = document.getElementById('gameOverMessage');
+    
+    const powerShotBtn = document.getElementById('powerShotBtn');
+    const meleeStrikeBtn = document.getElementById('meleeStrikeBtn');
+    const powerShotCd = document.getElementById('powerShotCd');
+    const meleeStrikeCd = document.getElementById('meleeStrikeCd');
+
+    const W = 400, H = 500;
+    
+    let player = { x: 80, y: H/2, radius: 16, health: 100, maxHealth: 100 };
+    let boss = { x: W-80, y: H/2, radius: 30, health: 300, maxHealth: 300 };
+    
+    let milkBullets = [];
+    let poopAttacks = [];
+    
+    let score = 0;
+    let gameActive = false;
+    let gameLoopId = null;
+    let frameCount = 0;
+    
+    // Способности
+    let powerShotActive = false;
+    let powerShotTimer = 0;
+    let powerShotCooldown = 0;
+    
+    let meleeStrikeCooldown = 0;
+    
+    let bossMoveTimer = 0;
+    let bossTargetX = boss.x, bossTargetY = boss.y;
+    let bossShootTimer = 0;
+    let bossPhase = 1;
+    
+    const moveJoystick = document.getElementById('moveJoystick');
+    const moveKnob = document.getElementById('moveKnob');
+    const shootJoystick = document.getElementById('shootJoystick');
+    const shootKnob = document.getElementById('shootKnob');
+    
+    let moveVector = { x: 0, y: 0 };
+    let shootVector = { x: 1, y: 0 };
+    
+    let moveTouchId = null;
+    let shootTouchId = null;
+    
+    const JOY_RADIUS = 35;
+    const PLAYER_SPEED = 4.0;
+    const BULLET_SPEED = 7.0;
+    const POOP_SPEED = 3.5;
+
+    function resetGame() {
+      player.health = player.maxHealth;
+      player.x = 70;
+      player.y = H/2;
+      
+      boss.health = boss.maxHealth;
+      boss.x = W - 70;
+      boss.y = H/2;
+      bossPhase = 1;
+      
+      milkBullets = [];
+      poopAttacks = [];
+      score = 0;
+      frameCount = 0;
+      
+      powerShotActive = false;
+      powerShotTimer = 0;
+      powerShotCooldown = 0;
+      meleeStrikeCooldown = 0;
+      
+      powerShotBtn.classList.remove('disabled', 'power-active');
+      meleeStrikeBtn.classList.remove('disabled');
+      
+      updateUI();
+    }
+
+    function updateUI() {
+      playerHealthBar.style.width = Math.max(0, (player.health / player.maxHealth) * 100) + '%';
+      bossHealthBar.style.width = Math.max(0, (boss.health / boss.maxHealth) * 100) + '%';
+      scoreDisplay.textContent = String(score).padStart(3, '0');
+      
+      // Обновление кулдаунов
+      if (powerShotCooldown > 0) {
+        powerShotCd.style.width = (powerShotCooldown / 180) * 100 + '%';
+        powerShotBtn.classList.add('disabled');
+      } else {
+        powerShotCd.style.width = '0%';
+        powerShotBtn.classList.remove('disabled');
+      }
+      
+      if (meleeStrikeCooldown > 0) {
+        meleeStrikeCd.style.width = (meleeStrikeCooldown / 300) * 100 + '%';
+        meleeStrikeBtn.classList.add('disabled');
+      } else {
+        meleeStrikeCd.style.width = '0%';
+        meleeStrikeBtn.classList.remove('disabled');
+      }
+      
+      if (powerShotActive) {
+        powerShotBtn.classList.add('power-active');
+      } else {
+        powerShotBtn.classList.remove('power-active');
+      }
+    }
+
+    // --- СПОСОБНОСТИ ---
+    function activatePowerShot() {
+      if (powerShotCooldown > 0 || !gameActive) return;
+      powerShotActive = true;
+      powerShotTimer = 180; // 3 секунды при 60 fps
+      powerShotCooldown = 180; // кулдаун 3 секунды
+    }
+
+    function activateMeleeStrike() {
+      if (meleeStrikeCooldown > 0 || !gameActive) return;
+      
+      // Удар по области вокруг игрока
+      for (let i = poopAttacks.length - 1; i >= 0; i--) {
+        let p = poopAttacks[i];
+        let dist = Math.hypot(p.x - player.x, p.y - player.y);
+        if (dist < 80) {
+          poopAttacks.splice(i, 1);
+        }
+      }
+      
+      // Урон боссу если близко
+      let distToBoss = Math.hypot(boss.x - player.x, boss.y - player.y);
+      if (distToBoss < 90) {
+        boss.health = Math.max(0, boss.health - 40);
+        score += 50;
+        updateUI();
+        if (boss.health <= 0) gameOver(true);
+      }
+      
+      meleeStrikeCooldown = 900; // 15 секунд
+    }
+
+    // --- МУЛЬТИТАЧ ДЖОЙСТИКИ ---
+    function handleTouchStart(e) {
+      e.preventDefault();
+      const touches = e.touches;
+      
+      for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        const moveRect = moveJoystick.getBoundingClientRect();
+        const shootRect = shootJoystick.getBoundingClientRect();
+        
+        if (moveTouchId === null && 
+            touch.clientX >= moveRect.left && touch.clientX <= moveRect.right &&
+            touch.clientY >= moveRect.top && touch.clientY <= moveRect.bottom) {
+          moveTouchId = touch.identifier;
+          updateJoystickPosition(touch, moveJoystick, moveKnob, (v) => moveVector = v);
+        }
+        else if (shootTouchId === null && 
+                 touch.clientX >= shootRect.left && touch.clientX <= shootRect.right &&
+                 touch.clientY >= shootRect.top && touch.clientY <= shootRect.bottom) {
+          shootTouchId = touch.identifier;
+          updateJoystickPosition(touch, shootJoystick, shootKnob, (v) => shootVector = v);
+        }
+      }
+    }
+
+    function handleTouchMove(e) {
+      e.preventDefault();
+      const touches = e.touches;
+      
+      for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        if (moveTouchId === touch.identifier) {
+          updateJoystickPosition(touch, moveJoystick, moveKnob, (v) => moveVector = v);
+        }
+        else if (shootTouchId === touch.identifier) {
+          updateJoystickPosition(touch, shootJoystick, shootKnob, (v) => shootVector = v);
+        }
+      }
+    }
+
+    function handleTouchEnd(e) {
+      e.preventDefault();
+      const touches = e.touches;
+      let moveStillActive = false, shootStillActive = false;
+      
+      for (let i = 0; i < touches.length; i++) {
+        if (touches[i].identifier === moveTouchId) moveStillActive = true;
+        if (touches[i].identifier === shootTouchId) shootStillActive = true;
+      }
+      
+      if (!moveStillActive && moveTouchId !== null) {
+        moveTouchId = null;
+        moveVector = { x: 0, y: 0 };
+        moveKnob.style.left = '27px';
+        moveKnob.style.top = '27px';
+      }
+      if (!shootStillActive && shootTouchId !== null) {
+        shootTouchId = null;
+        shootVector = { x: 1, y: 0 };
+        shootKnob.style.left = '27px';
+        shootKnob.style.top = '27px';
+      }
+    }
+
+    function updateJoystickPosition(touch, joystick, knob, setVector) {
+      const rect = joystick.getBoundingClientRect();
+      const centerX = rect.left + rect.width/2;
+      const centerY = rect.top + rect.height/2;
+      
+      let dx = touch.clientX - centerX;
+      let dy = touch.clientY - centerY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      
+      if (dist > JOY_RADIUS) {
+        dx = dx / dist * JOY_RADIUS;
+        dy = dy / dist * JOY_RADIUS;
+      }
+      
+      knob.style.left = (27 + dx) + 'px';
+      knob.style.top = (27 + dy) + 'px';
+      
+      if (dist > 8) {
+        setVector({ x: dx / JOY_RADIUS, y: dy / JOY_RADIUS });
+      } else {
+        setVector({ x: 0, y: 0 });
+      }
+    }
+
+    moveJoystick.addEventListener('touchstart', handleTouchStart, { passive: false });
+    moveJoystick.addEventListener('touchmove', handleTouchMove, { passive: false });
+    moveJoystick.addEventListener('touchend', handleTouchEnd);
+    moveJoystick.addEventListener('touchcancel', handleTouchEnd);
+    
+    shootJoystick.addEventListener('touchstart', handleTouchStart, { passive: false });
+    shootJoystick.addEventListener('touchmove', handleTouchMove, { passive: false });
+    shootJoystick.addEventListener('touchend', handleTouchEnd);
+    shootJoystick.addEventListener('touchcancel', handleTouchEnd);
+
+    powerShotBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      activatePowerShot();
+    });
+    
+    meleeStrikeBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      activateMeleeStrike();
+    });
+
+    function shootMilk() {
+      if (!gameActive || player.health <= 0) return;
+      
+      let dirX = shootVector.x;
+      let dirY = shootVector.y;
+      if (dirX === 0 && dirY === 0) { dirX = 1; dirY = 0; }
+      
+      const len = Math.sqrt(dirX*dirX + dirY*dirY);
+      dirX /= len; dirY /= len;
+      
+      let damage = powerShotActive ? 12 : 7;
+      let speed = BULLET_SPEED;
+      let radius = powerShotActive ? 10 : 8;
+      
+      milkBullets.push({
+        x: player.x + dirX * 18,
+        y: player.y + dirY * 10,
+        vx: dirX * speed,
+        vy: dirY * speed,
+        radius: radius,
+        damage: damage,
+        life: 100
+      });
+    }
+
+    function updateBossAI() {
+      if (!gameActive || boss.health <= 0) return;
+      
+      // Фазы босса в зависимости от здоровья
+      if (boss.health < 150 && bossPhase === 1) bossPhase = 2;
+      if (boss.health < 70 && bossPhase === 2) bossPhase = 3;
+      
+      let speed = 1.0 + bossPhase * 0.3;
+      let shootRate = Math.max(25, 50 - bossPhase * 8);
+      let bulletCount = 3 + bossPhase;
+      
+      bossMoveTimer++;
+      if (bossMoveTimer % 30 === 0) {
+        let waveX = Math.sin(frameCount * 0.04) * 110 + Math.cos(frameCount * 0.025) * 70;
+        let waveY = Math.cos(frameCount * 0.035) * 90 + Math.sin(frameCount * 0.05) * 70;
+        
+        bossTargetX = player.x + waveX + (Math.random() - 0.5) * 50;
+        bossTargetY = player.y + waveY + (Math.random() - 0.5) * 50;
+        
+        bossTargetX = Math.max(230, Math.min(W - 40, bossTargetX));
+        bossTargetY = Math.max(50, Math.min(H - 50, bossTargetY));
+      }
+      
+      let dx = bossTargetX - boss.x;
+      let dy = bossTargetY - boss.y;
+      let dist = Math.hypot(dx, dy);
+      if (dist > 2) {
+        boss.x += (dx / dist) * speed * (0.7 + 0.5 * Math.sin(frameCount * 0.1));
+        boss.y += (dy / dist) * speed * (0.7 + 0.5 * Math.cos(frameCount * 0.08));
+      }
+      
+      bossShootTimer++;
+      if (bossShootTimer > shootRate) {
+        for (let i = 0; i < bulletCount; i++) {
+          let angle = Math.atan2(player.y - boss.y, player.x - boss.x);
+          angle += (i - (bulletCount-1)/2) * 0.22 + (Math.random() - 0.5) * 0.3;
+          poopAttacks.push({
+            x: boss.x, y: boss.y,
+            vx: Math.cos(angle) * POOP_SPEED * (0.9 + Math.random()*0.4),
+            vy: Math.sin(angle) * POOP_SPEED * (0.9 + Math.random()*0.4),
+            radius: 9, life: 140
+          });
+        }
+        bossShootTimer = 0;
+      }
+    }
+
+    function updatePlayer() {
+      if (!gameActive || player.health <= 0) return;
+      
+      if (moveVector.x !== 0 || moveVector.y !== 0) {
+        player.x += moveVector.x * PLAYER_SPEED;
+        player.y += moveVector.y * PLAYER_SPEED;
+      }
+      
+      player.x = Math.max(30, Math.min(180, player.x));
+      player.y = Math.max(40, Math.min(H - 40, player.y));
+      
+      if (shootTouchId !== null && frameCount % 8 === 0) {
+        shootMilk();
+      }
+    }
+
+    function updateAbilities() {
+      if (powerShotActive) {
+        powerShotTimer--;
+        if (powerShotTimer <= 0) {
+          powerShotActive = false;
+        }
+      }
+      
+      if (powerShotCooldown > 0) {
+        powerShotCooldown--;
+      }
+      
+      if (meleeStrikeCooldown > 0) {
+        meleeStrikeCooldown--;
+      }
+      
+      updateUI();
+    }
+
+    function updateProjectiles() {
+      for (let i = milkBullets.length - 1; i >= 0; i--) {
+        let b = milkBullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        b.life--;
+        
+        if (boss.health > 0 && Math.hypot(b.x - boss.x, b.y - boss.y) < boss.radius + b.radius) {
+          boss.health = Math.max(0, boss.health - b.damage);
+          score += b.damage * 2;
+          updateUI();
+          milkBullets.splice(i, 1);
+          if (boss.health <= 0) gameOver(true);
+          continue;
+        }
+        if (b.life <= 0 || b.x < -30 || b.x > W+30) milkBullets.splice(i, 1);
+      }
+      
+      for (let i = poopAttacks.length - 1; i >= 0; i--) {
+        let p = poopAttacks[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        
+        if (player.health > 0 && Math.hypot(p.x - player.x, p.y - player.y) < player.radius + p.radius) {
+          player.health = Math.max(0, player.health - 8);
+          updateUI();
+          poopAttacks.splice(i, 1);
+          if (player.health <= 0) gameOver(false);
+          continue;
+        }
+        if (p.life <= 0 || p.x < -30 || p.x > W+30) poopAttacks.splice(i, 1);
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      
+      // Фон
+      ctx.fillStyle = '#d4eef5';
+      ctx.globalAlpha = 0.2;
+      ctx.beginPath();
+      ctx.arc(50, 80, 50, 0, Math.PI*2);
+      ctx.arc(350, 120, 60, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1.0;
+      
+      // БОСС
+      let bossColor = bossPhase === 1 ? '#c9a0dc' : (bossPhase === 2 ? '#b070c0' : '#9040a0');
+      ctx.shadowColor = '#b0a0d0';
+      ctx.shadowBlur = 20;
+      ctx.fillStyle = bossColor;
+      ctx.beginPath();
+      ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#a888c8';
+      ctx.beginPath();
+      ctx.arc(boss.x-14, boss.y-18, 10, 0, Math.PI*2);
+      ctx.arc(boss.x+14, boss.y-18, 10, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#ff0000';
+      ctx.shadowColor = '#ff6666';
+      ctx.beginPath();
+      ctx.arc(boss.x-9, boss.y-5, 7, 0, Math.PI*2);
+      ctx.arc(boss.x+9, boss.y-5, 7, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(boss.x-11, boss.y-8, 3, 0, Math.PI*2);
+      ctx.arc(boss.x+7, boss.y-8, 3, 0, Math.PI*2);
+      ctx.fill();
+      
+      // ИГРОК
+      ctx.shadowColor = '#90c8e0';
+      ctx.shadowBlur = 20;
+      ctx.fillStyle = powerShotActive ? '#ffd700' : '#7ab8d4';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#5a9ab8';
+      ctx.beginPath();
+      ctx.arc(player.x-5, player.y-15, 7, 0, Math.PI*2);
+      ctx.arc(player.x+5, player.y-15, 7, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#b0ddf0';
+      ctx.beginPath();
+      ctx.arc(player.x-6, player.y-4, 4.5, 0, Math.PI*2);
+      ctx.arc(player.x+6, player.y-4, 4.5, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#204060';
+      ctx.beginPath();
+      ctx.arc(player.x-6, player.y-6, 2, 0, Math.PI*2);
+      ctx.arc(player.x+6, player.y-6, 2, 0, Math.PI*2);
+      ctx.fill();
+      
+      ctx.shadowBlur = 0;
+      
+      // МОЛОКО
+      for (let b of milkBullets) {
+        ctx.beginPath();
+        ctx.moveTo(b.x - b.vx*1.5, b.y - b.vy*1.5);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = '#c8b090';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.shadowColor = powerShotActive ? '#ffd700' : '#f0f8ff';
+        ctx.shadowBlur = powerShotActive ? 25 : 18;
+        ctx.fillStyle = powerShotActive ? '#ffe066' : '#f8fcff';
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, b.radius, b.radius*0.6, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      
+      // КАКАШКИ
+      for (let p of poopAttacks) {
+        ctx.shadowColor = '#a08060';
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = '#a07850';
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, 11, 8, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#8a6040';
+        ctx.beginPath();
+        ctx.ellipse(p.x-2, p.y-2, 6, 4, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      
+      // Аура удара вблизи при активном кулдауне
+      if (meleeStrikeCooldown > 0) {
+        ctx.shadowColor = '#ffaa00';
+        ctx.shadowBlur = 30;
+        ctx.strokeStyle = '#ffcc00';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, 50 + Math.sin(frameCount*0.2)*5, 0, Math.PI*2);
+        ctx.stroke();
+      }
+      
+      ctx.shadowBlur = 0;
+    }
+
+    function gameTick() {
+      if (!gameActive) return;
+      frameCount++;
+      updatePlayer();
+      updateBossAI();
+      updateAbilities();
+      updateProjectiles();
+      draw();
+      gameLoopId = requestAnimationFrame(gameTick);
+    }
+
+    function gameOver(won) {
+      gameActive = false;
+      moveTouchId = shootTouchId = null;
+      moveVector = { x: 0, y: 0 };
+      shootVector = { x: 1, y: 0 };
+      
+      if (gameLoopId) cancelAnimationFrame(gameLoopId);
+      gameOverTitle.textContent = won ? '🏆 ПОБЕДА! 🏆' : '💀 ПОРАЖЕНИЕ 💀';
+      gameOverMessage.textContent = `СЧЁТ: ${score}`;
+      gameOverlay.style.display = 'flex';
+    }
+
+    function startGame() {
+      resetGame();
+      gameActive = true;
+      startScreen.style.display = 'none';
+      gameOverlay.style.display = 'none';
+      
+      if (gameLoopId) cancelAnimationFrame(gameLoopId);
+      gameLoopId = requestAnimationFrame(gameTick);
+    }
+
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
+    
+    document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    
+    resetGame();
+    draw();
+  })();
+</script>
+</body>
+</html>
