@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>АУРА · ТРИГОНОМЕТРИЯ · ТРИ СЕГМЕНТА</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Montserrat', system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 25%, #d4e8ff 50%, #b8d9ff 75%, #a0c8ff 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 80vw;
+      height: 80vw;
+      max-width: 900px;
+      max-height: 900px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(100, 180, 255, 0.4) 50%, transparent 80%);
+      filter: blur(100px);
+      top: -10%;
+      left: -10%;
+      z-index: 0;
+      animation: auraFloat1 16s infinite alternate ease-in-out;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      width: 70vw;
+      height: 70vw;
+      max-width: 800px;
+      max-height: 800px;
+      background: radial-gradient(circle, rgba(200, 230, 255, 0.8) 0%, rgba(0, 100, 200, 0.3) 60%, transparent 90%);
+      filter: blur(110px);
+      bottom: -5%;
+      right: -5%;
+      z-index: 0;
+      animation: auraFloat2 20s infinite alternate ease-in-out;
+    }
+
+    @keyframes auraFloat1 {
+      0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+      100% { transform: translate(8%, 6%) scale(1.2); opacity: 1; }
+    }
+    @keyframes auraFloat2 {
+      0% { transform: translate(0, 0) scale(1); opacity: 0.7; }
+      100% { transform: translate(-5%, -8%) scale(1.3); opacity: 1; }
+    }
+
+    .calculator {
+      position: relative;
+      z-index: 10;
+      max-width: 950px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 48px;
+      padding: 30px 28px 36px;
+      box-shadow: 0 25px 50px -8px rgba(0, 50, 100, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 0 40px rgba(0, 150, 255, 0.3);
+      transition: box-shadow 0.3s;
+    }
+
+    .calculator:hover {
+      box-shadow: 0 30px 60px -5px rgba(0, 70, 150, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.8) inset, 0 0 60px rgba(0, 180, 255, 0.5);
+    }
+
+    .title-block {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .glow-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #0066cc, #0099ff, #00ccff, #66b3ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px #0099ff;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+      word-break: break-word;
+    }
+
+    .subaura {
+      color: #004c99;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      opacity: 0.9;
+    }
+
+    .mode-selector {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      padding: 12px 30px;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: 2px solid #4da6ff;
+      background: rgba(255, 255, 255, 0.6);
+      color: #0059b3;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(8px);
+    }
+
+    .mode-btn.active {
+      background: #0066cc;
+      color: white;
+      border-color: #ffffff;
+      box-shadow: 0 0 20px #66b3ff;
+    }
+
+    .selector-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px 18px;
+      margin-bottom: 28px;
+      justify-content: center;
+    }
+
+    .select-wrapper {
+      flex: 1 1 200px;
+      min-width: 170px;
+    }
+
+    .label-icon {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #0059b3;
+      margin-bottom: 8px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .neo-select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #4da6ff;
+      border-radius: 40px;
+      padding: 14px 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #003366;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 100, 200, 0.2), 0 0 15px rgba(255, 255, 255, 0.5) inset;
+      transition: all 0.2s;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .neo-select option {
+      background: #ffffff;
+      color: #003366;
+      font-weight: 500;
+    }
+
+    .neo-select:hover {
+      border-color: #0080ff;
+      box-shadow: 0 0 20px #66b3ff, 0 4px 12px rgba(0, 100, 200, 0.3);
+    }
+
+    /* ТРИ СЕГМЕНТА ВВОДА */
+    .three-segments {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .segment {
+      flex: 1 1 180px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 30px;
+      padding: 18px 15px;
+      border: 2px solid rgba(77, 166, 255, 0.4);
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+
+    .segment:hover {
+      border-color: #4da6ff;
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 15px rgba(0, 100, 200, 0.15);
+    }
+
+    .segment-title {
+      text-align: center;
+      color: #0059b3;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    .segment-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .segment-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #80b3ff;
+      border-radius: 30px;
+      padding: 12px 15px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #003366;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .segment-input:focus {
+      border-color: #0066cc;
+      box-shadow: 0 0 15px #99ccff;
+    }
+
+    .segment-input::placeholder {
+      color: #a0c4e8;
+      font-size: 0.9rem;
+    }
+
+    .sqrt-symbol {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0059b3;
+    }
+
+    .pi-checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .pi-checkbox label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #0059b3;
+    }
+
+    .pi-checkbox input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: #0066cc;
+    }
+
+    .degree-presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1.5px solid #66b3ff;
+      border-radius: 20px;
+      padding: 8px 5px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #004c99;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      background: #4da6ff;
+      color: white;
+      border-color: #ffffff;
+    }
+
+    .quarter-section {
+      margin: 20px 0 26px;
+    }
+
+    .quarter-title {
+      color: #0059b3;
+      margin-bottom: 16px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    }
+
+    .quarter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .quarter-btn {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      border: 2px solid #80b3ff;
+      border-radius: 60px;
+      padding: 16px 5px;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #004c99;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      box-shadow: 0 6px 0 #b3d4ff, 0 4px 12px rgba(0, 100, 200, 0.2);
+      transition: all 0.15s;
+      cursor: pointer;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .quarter-btn.active {
+      background: linear-gradient(145deg, #4da6ff, #0066cc);
+      border-color: #ffffff;
+      box-shadow: 0 0 25px #66b3ff, 0 0 15px #ffffff, 0 4px 0 #004c99;
+      color: white;
+      transform: scale(1.02);
+      text-shadow: 0 0 20px white;
+    }
+
+    .calc-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0080ff, #0066cc);
+      border: 2px solid #ffffff;
+      border-radius: 60px;
+      padding: 18px 10px;
+      font-size: 1.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 8px;
+      color: #ffffff;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 12px 0 #004c99, 0 8px 25px rgba(0, 100, 200, 0.4), 0 0 30px #66b3ff;
+      margin: 16px 0 24px;
+      cursor: pointer;
+      transition: 0.08s linear;
+    }
+
+    .calc-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 6px 0 #004c99, 0 8px 25px rgba(0, 100, 200, 0.4), 0 0 40px #99ccff;
+    }
+
+    .results-panel {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 24px 22px;
+      border: 2px solid rgba(77, 166, 255, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 100, 200, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.8);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px 22px;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px dashed #4da6ff;
+      padding-bottom: 8px;
+    }
+
+    .func-name {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #0066cc, #0099ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    }
+
+    .func-value {
+      font-size: 2rem;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      color: #003366;
+      text-shadow: 0 0 15px #ffffff, 0 0 5px rgba(0, 150, 255, 0.3);
+      letter-spacing: 2px;
+      word-break: break-word;
+      text-align: right;
+    }
+
+    .angle-display {
+      text-align: center;
+      margin-bottom: 16px;
+      padding: 8px;
+      background: rgba(77, 166, 255, 0.2);
+      border-radius: 30px;
+      color: #0059b3;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .error-message {
+      color: #cc0000;
+      background: rgba(255, 240, 240, 0.9);
+      border-radius: 30px;
+      padding: 10px 18px;
+      margin-top: 16px;
+      font-weight: 600;
+      backdrop-filter: blur(5px);
+      border-left: 8px solid #ff3333;
+      box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
+    }
+
+    .info-note {
+      color: #0059b3;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      text-align: right;
+      opacity: 0.9;
+      font-weight: 500;
+    }
+
+    .signature {
+      margin-top: 28px;
+      text-align: center;
+      color: #0066cc;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 6px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+
+    .divider {
+      text-align: center;
+      color: #4da6ff;
+      font-size: 1.5rem;
+      font-weight: 300;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <div class="title-block">
+    <div class="glow-title">⚡ АУРА · ТРИГОНОМЕТРИЯ ⚡</div>
+    <div class="subaura">три сегмента точности</div>
+  </div>
+
+  <!-- Переключатель режима -->
+  <div class="mode-selector">
+    <button class="mode-btn active" data-mode="value">📐 ЗНАЮ ФУНКЦИЮ</button>
+    <button class="mode-btn" data-mode="angle">📏 ЗНАЮ УГОЛ</button>
+  </div>
+
+  <div class="selector-group" id="functionSelectGroup">
+    <div class="select-wrapper">
+      <span class="label-icon">🌀 ИЗВЕСТНАЯ ФУНКЦИЯ</span>
+      <select id="funcSelect" class="neo-select">
+        <option value="sin" selected>sin α · синус</option>
+        <option value="cos">cos α · косинус</option>
+        <option value="tan">tg α · тангенс</option>
+        <option value="cot">ctg α · котангенс</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ТРИ СЕГМЕНТА ВВОДА -->
+  <div style="margin-bottom: 10px;">
+    <div class="label-icon">💎 КОНСТРУКТОР ЗНАЧЕНИЯ / УГЛА</div>
+  </div>
+  
+  <div class="three-segments">
+    <!-- СЕГМЕНТ 1: КОРЕНЬ И МНОЖИТЕЛЬ -->
+    <div class="segment">
+      <div class="segment-title">🔢 КОРЕНЬ & МНОЖ.</div>
+      <div class="segment-content">
+        <div class="input-row">
+          <span class="sqrt-symbol">√</span>
+          <input type="text" id="sqrtInput" class="segment-input" placeholder="число" value="">
+        </div>
+        <div class="divider">×</div>
+        <input type="text" id="multiplierInput" class="segment-input" placeholder="a/b или число" value="1">
+      </div>
+    </div>
+
+    <!-- СЕГМЕНТ 2: ЧИСЛО π -->
+    <div class="segment">
+      <div class="segment-title">🥧 ЧИСЛО π</div>
+      <div class="segment-content">
+        <div class="pi-checkbox">
+          <label>
+            <input type="checkbox" id="piCheckbox"> 
+            <span style="font-size: 2.5rem; font-weight: 700;">π</span>
+          </label>
+        </div>
+        <div class="divider" style="margin-top: 15px;">×</div>
+        <div style="text-align: center; color: #0059b3; margin-top: 10px;">
+          <span style="font-size: 0.9rem;">множитель π</span><br>
+          <input type="text" id="piMultiplierInput" class="segment-input" placeholder="коэфф." value="1" style="width: 80%; margin-top: 5px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- СЕГМЕНТ 3: ГРАДУСЫ -->
+    <div class="segment">
+      <div class="segment-title">📐 ГРАДУСЫ</div>
+      <div class="segment-content">
+        <input type="text" id="degreesInput" class="segment-input" placeholder="например 60" value="">
+        <div class="degree-presets">
+          <button class="preset-btn" data-degrees="30">30°</button>
+          <button class="preset-btn" data-degrees="45">45°</button>
+          <button class="preset-btn" data-degrees="60">60°</button>
+          <button class="preset-btn" data-degrees="90">90°</button>
+          <button class="preset-btn" data-degrees="180">180°</button>
+          <button class="preset-btn" data-degrees="270">270°</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЧЕТВЕРТЬ (только для режима функции) -->
+  <div class="quarter-section" id="quarterSection">
+    <div class="quarter-title">
+      <span>🧿 ЧЕТВЕРТЬ УГЛА α</span>
+      <span style="font-size:0.8rem; opacity:0.8;">(I · II · III · IV)</span>
+    </div>
+    <div class="quarter-grid">
+      <div class="quarter-btn active" data-quarter="1">Ⅰ</div>
+      <div class="quarter-btn" data-quarter="2">Ⅱ</div>
+      <div class="quarter-btn" data-quarter="3">Ⅲ</div>
+      <div class="quarter-btn" data-quarter="4">Ⅳ</div>
+    </div>
+  </div>
+
+  <button class="calc-btn" id="calculateBtn">ВЫЧИСЛИТЬ</button>
+
+  <!-- РЕЗУЛЬТАТЫ -->
+  <div class="results-panel">
+    <div class="angle-display" id="angleDisplay"></div>
+    <div class="result-grid">
+      <div class="result-item"><span class="func-name">sin α</span><span class="func-value" id="resSin">—</span></div>
+      <div class="result-item"><span class="func-name">cos α</span><span class="func-value" id="resCos">—</span></div>
+      <div class="result-item"><span class="func-name">tg α</span><span class="func-value" id="resTan">—</span></div>
+      <div class="result-item"><span class="func-name">ctg α</span><span class="func-value" id="resCot">—</span></div>
+    </div>
+    <div id="errorMsg" class="error-message"></div>
+    <div class="info-note">✦ корни · π · градусы ✦</div>
+  </div>
+
+  <div class="signature">АУРА · ТРИ СЕГМЕНТА</div>
+</div>
+
+<script>
+  (function(){
+    "use strict";
+
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const functionSelectGroup = document.getElementById('functionSelectGroup');
+    const quarterSection = document.getElementById('quarterSection');
+    
+    const funcSelect = document.getElementById('funcSelect');
+    const sqrtInput = document.getElementById('sqrtInput');
+    const multiplierInput = document.getElementById('multiplierInput');
+    const piCheckbox = document.getElementById('piCheckbox');
+    const piMultiplierInput = document.getElementById('piMultiplierInput');
+    const degreesInput = document.getElementById('degreesInput');
+    
+    const quarterBtns = document.querySelectorAll('.quarter-btn');
+    const calcBtn = document.getElementById('calculateBtn');
+
+    const resSin = document.getElementById('resSin');
+    const resCos = document.getElementById('resCos');
+    const resTan = document.getElementById('resTan');
+    const resCot = document.getElementById('resCot');
+    const angleDisplay = document.getElementById('angleDisplay');
+    const errorMsgDiv = document.getElementById('errorMsg');
+
+    let currentMode = 'value';
+    let currentQuarter = 1;
+
+    // Переключение режима
+    modeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+        
+        if (currentMode === 'value') {
+          functionSelectGroup.style.display = 'block';
+          quarterSection.style.display = 'block';
+        } else {
+          functionSelectGroup.style.display = 'none';
+          quarterSection.style.display = 'none';
+        }
+      });
+    });
+
+    // Пресеты градусов
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        degreesInput.value = btn.dataset.degrees;
+      });
+    });
+
+    function setActiveQuarter(quarter) {
+      quarterBtns.forEach(btn => {
+        const q = parseInt(btn.getAttribute('data-quarter'), 10);
+        btn.classList.toggle('active', q === quarter);
+      });
+      currentQuarter = quarter;
+    }
+
+    quarterBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        setActiveQuarter(parseInt(this.getAttribute('data-quarter'), 10));
+      });
+    });
+
+    // Парсинг дроби
+    function parseFraction(str) {
+      str = str.trim();
+      if (str === '') return 1;
+      
+      if (str.includes('/')) {
+        let parts = str.split('/');
+        if (parts.length !== 2) throw new Error('Дробь должна быть вида a/b');
+        
+        let numerator = parseFloat(parts[0].trim());
+        let denominator = parseFloat(parts[1].trim());
+        
+        if (isNaN(numerator) || isNaN(denominator)) {
+          throw new Error('Неверный формат дроби');
+        }
+        if (denominator === 0) throw new Error('Деление на ноль');
+        
+        return numerator / denominator;
+      } else {
+        let val = parseFloat(str);
+        if (isNaN(val)) throw new Error('Введите число или дробь');
+        return val;
+      }
+    }
+
+    // Получение итогового значения из трёх сегментов
+    function getNumericValue() {
+      // Сегмент 1: корень и множитель
+      let sqrtStr = sqrtInput.value.trim();
+      let sqrtNum = null;
+      if (sqrtStr !== '') {
+        sqrtNum = parseFloat(sqrtStr);
+        if (isNaN(sqrtNum) || sqrtNum < 0) throw new Error('Под корнем ≥ 0');
+      }
+      
+      let multStr = multiplierInput.value.trim();
+      if (multStr === '') multStr = '1';
+      let multiplier = parseFraction(multStr);
+      
+      let value = multiplier;
+      if (sqrtNum !== null) {
+        value *= Math.sqrt(sqrtNum);
+      }
+      
+      // Сегмент 2: π
+      if (piCheckbox.checked) {
+        let piMultStr = piMultiplierInput.value.trim();
+        if (piMultStr === '') piMultStr = '1';
+        let piMultiplier = parseFraction(piMultStr);
+        value *= piMultiplier * Math.PI;
+      }
+      
+      // Сегмент 3: градусы (конвертируем в радианы)
+      let degStr = degreesInput.value.trim();
+      if (degStr !== '') {
+        let degrees = parseFraction(degStr);
+        value = degrees * Math.PI / 180;
+      }
+      
+      return value;
+    }
+
+    function toFractionString(x, maxDen = 100) {
+      if (Math.abs(x) < 1e-12) return '0';
+      const sign = x < 0 ? -1 : 1;
+      x = Math.abs(x);
+      
+      let bestNum = 1, bestDen = 1;
+      let bestDiff = Math.abs(x - 1);
+      
+      for (let den = 1; den <= maxDen; den++) {
+        let num = Math.round(x * den);
+        let diff = Math.abs(x - num / den);
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          bestNum = num;
+          bestDen = den;
+        }
+      }
+      
+      const gcd = (a, b) => b ? gcd(b, a % b) : a;
+      const div = gcd(bestNum, bestDen);
+      bestNum /= div;
+      bestDen /= div;
+      
+      if (bestDen === 1) return (sign * bestNum).toString();
+      return `${sign * bestNum}/${bestDen}`;
+    }
+
+    function formatExact(num) {
+      if (num === null || !isFinite(num)) {
+        if (num === Infinity) return '∞';
+        if (num === -Infinity) return '-∞';
+        return '—';
+      }
+      
+      const sign = num < 0 ? -1 : 1;
+      const absNum = Math.abs(num);
+      if (absNum < 1e-12) return '0';
+      
+      // Точные значения
+      const exactValues = {
+        0: '0',
+        0.5: '1/2',
+        [Math.sqrt(2)/2]: '√2/2',
+        [Math.sqrt(3)/2]: '√3/2',
+        1: '1',
+        [Math.sqrt(3)]: '√3',
+        [1/Math.sqrt(3)]: '1/√3',
+        [Math.sqrt(2)]: '√2',
+        [1/Math.sqrt(2)]: '1/√2'
+      };
+      
+      for (let [val, str] of Object.entries(exactValues)) {
+        if (Math.abs(absNum - parseFloat(val)) < 1e-10) {
+          return (sign === -1 ? '-' : '') + str;
+        }
+      }
+      
+      // Для углов с π
+      let rational = absNum;
+      if (Math.abs(rational - Math.PI) < 1e-10) return sign === -1 ? '-π' : 'π';
+      
+      return (sign === -1 ? '-' : '') + absNum.toFixed(6).replace(/\.?0+$/, '');
+    }
+
+    function getSigns(q) {
+      if (q === 1) return { sin: 1, cos: 1, tan: 1, cot: 1 };
+      if (q === 2) return { sin: 1, cos: -1, tan: -1, cot: -1 };
+      if (q === 3) return { sin: -1, cos: -1, tan: 1, cot: 1 };
+      return { sin: -1, cos: 1, tan: -1, cot: -1 };
+    }
+
+    function computeFromAngle(angle) {
+      const sin = Math.sin(angle);
+      const cos = Math.cos(angle);
+      const tan = Math.tan(angle);
+      const cot = 1 / tan;
+      
+      return { sin, cos, tan, cot };
+    }
+
+    function computeFromValue(knownFunc, numVal, quarter) {
+      const signs = getSigns(quarter);
+      const eps = 1e-10;
+      let sin = null, cos = null, tan = null, cot = null;
+      
+      if (knownFunc === 'sin') {
+        if (Math.abs(numVal) > 1.000001) {
+          throw new Error(`|sin α| ≤ 1 (получено ${numVal.toFixed(6)})`);
+        }
+        sin = Math.max(-1, Math.min(1, numVal));
+        const cos2 = 1 - sin * sin;
+        cos = Math.sqrt(Math.abs(cos2)) * signs.cos;
+        tan = (Math.abs(cos) < eps) ? (sin >= 0 ? Infinity : -Infinity) : sin / cos;
+        cot = (Math.abs(sin) < eps) ? (cos >= 0 ? Infinity : -Infinity) : cos / sin;
+        
+      } else if (knownFunc === 'cos') {
+        if (Math.abs(numVal) > 1.000001) {
+          throw new Error(`|cos α| ≤ 1 (получено ${numVal.toFixed(6)})`);
+        }
+        cos = Math.max(-1, Math.min(1, numVal));
+        const sin2 = 1 - cos * cos;
+        sin = Math.sqrt(Math.abs(sin2)) * signs.sin;
+        tan = (Math.abs(cos) < eps) ? (sin >= 0 ? Infinity : -Infinity) : sin / cos;
+        cot = (Math.abs(sin) < eps) ? (cos >= 0 ? Infinity : -Infinity) : cos / sin;
+        
+      } else if (knownFunc === 'tan') {
+        tan = numVal;
+        if (!isFinite(tan)) throw new Error('tg α должен быть числом');
+        const tan2 = tan * tan;
+        const cos2 = 1 / (1 + tan2);
+        cos = Math.sqrt(cos2) * signs.cos;
+        sin = tan * cos;
+        cot = (Math.abs(tan) < eps) ? (cos >= 0 ? Infinity : -Infinity) : 1 / tan;
+        
+      } else {
+        cot = numVal;
+        if (!isFinite(cot)) throw new Error('ctg α должен быть числом');
+        if (Math.abs(cot) < eps) {
+          tan = (cot >= 0) ? Infinity : -Infinity;
+        } else {
+          tan = 1 / cot;
+        }
+        const cot2 = cot * cot;
+        const sin2 = 1 / (1 + cot2);
+        sin = Math.sqrt(sin2) * signs.sin;
+        cos = sin * cot;
+      }
+      
+      return { sin, cos, tan, cot };
+    }
+
+    function onCalculate() {
+      errorMsgDiv.textContent = '';
+      
+      try {
+        const value = getNumericValue();
+        let results;
+        
+        if (currentMode === 'angle' || degreesInput.value.trim() !== '') {
+          // Если есть градусы или режим угла — считаем от угла
+          results = computeFromAngle(value);
+          
+          let angleStr = '';
+          if (degreesInput.value.trim() !== '') {
+            angleStr = `${degreesInput.value}° = ${(value * 180 / Math.PI).toFixed(2)}°`;
+          } else {
+            angleStr = `${value.toFixed(4)} рад`;
+          }
+          angleDisplay.textContent = `∠ α = ${angleStr}`;
+          angleDisplay.style.display = 'block';
+          
+        } else {
+          // Режим значения функции
+          results = computeFromValue(funcSelect.value, value, currentQuarter);
+          angleDisplay.style.display = 'none';
+        }
+        
+        resSin.textContent = formatExact(results.sin);
+        resCos.textContent = formatExact(results.cos);
+        
+        if (results.tan === Infinity) resTan.textContent = '∞';
+        else if (results.tan === -Infinity) resTan.textContent = '-∞';
+        else resTan.textContent = formatExact(results.tan);
+        
+        if (results.cot === Infinity) resCot.textContent = '∞';
+        else if (results.cot === -Infinity) resCot.textContent = '-∞';
+        else resCot.textContent = formatExact(results.cot);
+        
+      } catch (e) {
+        errorMsgDiv.textContent = e.message;
+        resSin.textContent = resCos.textContent = resTan.textContent = resCot.textContent = '—';
+        angleDisplay.style.display = 'none';
+      }
+    }
+
+    calcBtn.addEventListener('click', onCalculate);
+    
+    // Enter в полях
+    [sqrtInput, multiplierInput, piMultiplierInput, degreesInput].forEach(i => {
+      i.addEventListener('keypress', e => { 
+        if(e.key === 'Enter') onCalculate(); 
+      });
+    });
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      setActiveQuarter(1);
+      onCalculate();
+    });
+  })();
+</script>
+</body>
+</html>
