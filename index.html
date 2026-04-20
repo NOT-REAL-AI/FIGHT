@@ -28,7 +28,6 @@
       touch-action: none;
     }
 
-    /* Мягкая аура */
     body::before {
       content: "";
       position: absolute;
@@ -148,7 +147,6 @@
       flex: 1;
     }
 
-    /* Джойстики */
     .joystick-container {
       display: flex;
       justify-content: space-between;
@@ -181,6 +179,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 0 20px #aad4f0;
       transition: box-shadow 0.1s;
       touch-action: none;
+      pointer-events: none;
     }
 
     .shoot-joystick .joystick-knob {
@@ -268,6 +267,29 @@
       margin-top: 5px;
       opacity: 0.8;
     }
+
+    .level-transition {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px 40px;
+      border-radius: 50px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #3a6a8a;
+      z-index: 60;
+      backdrop-filter: blur(10px);
+      border: 3px solid #a0cce8;
+      display: none;
+      animation: levelPulse 1s infinite;
+    }
+
+    @keyframes levelPulse {
+      0%, 100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+    }
   </style>
 </head>
 <body>
@@ -302,6 +324,8 @@
   <div class="controls-hint">← ДВИЖЕНИЕ &nbsp;&nbsp;|&nbsp;&nbsp; СТРЕЛЬБА →</div>
 </div>
 
+<div class="level-transition" id="levelTransition">⭐ УРОВЕНЬ 2 ⭐</div>
+
 <div class="start-screen" id="startScreen">
   <div class="game-card">
     <h2>🥛 МОЛОЧНАЯ БИТВА</h2>
@@ -324,6 +348,7 @@
     const ctx = canvas.getContext('2d');
     const startScreen = document.getElementById('startScreen');
     const gameOverlay = document.getElementById('gameOverlay');
+    const levelTransition = document.getElementById('levelTransition');
     const startBtn = document.getElementById('startBtn');
     const restartBtn = document.getElementById('restartBtn');
     const playerHealthBar = document.getElementById('playerHealthBar');
@@ -335,7 +360,6 @@
 
     const W = 400, H = 500;
     
-    // Объекты
     let player = { x: 80, y: H/2, radius: 16, health: 100, maxHealth: 100 };
     let boss = { x: W-80, y: H/2, radius: 28, health: 100, maxHealth: 100 };
     
@@ -348,52 +372,48 @@
     let gameActive = false;
     let gameLoopId = null;
     let frameCount = 0;
+    let isTransitioning = false;
     
-    // Параметры босса по уровням
     const bossStats = {
       1: { health: 100, speed: 1.0, shootRate: 50, bulletCount: 3, color: '#c9a0dc' },
       2: { health: 150, speed: 1.4, shootRate: 40, bulletCount: 4, color: '#b890d0' },
       3: { health: 200, speed: 1.8, shootRate: 30, bulletCount: 5, color: '#a070c0' }
     };
     
-    // AI босса
     let bossMoveTimer = 0;
     let bossTargetX = boss.x, bossTargetY = boss.y;
     let bossShootTimer = 0;
     
-    // Джойстики
     const moveJoystick = document.getElementById('moveJoystick');
     const moveKnob = document.getElementById('moveKnob');
     const shootJoystick = document.getElementById('shootJoystick');
     const shootKnob = document.getElementById('shootKnob');
     
-    let moveActive = false;
     let moveVector = { x: 0, y: 0 };
-    let shootActive = false;
     let shootVector = { x: 1, y: 0 };
+    
+    // Для отслеживания активных касаний
+    let moveTouchId = null;
+    let shootTouchId = null;
     
     const JOY_RADIUS = 40;
     const PLAYER_SPEED = 3.8;
     const BULLET_SPEED = 6.5;
     const POOP_SPEED = 3.8;
 
-    // --- ИНИЦИАЛИЗАЦИЯ УРОВНЯ ---
     function initLevel(level) {
       const stats = bossStats[level];
       boss.health = stats.health;
       boss.maxHealth = stats.health;
       boss.radius = 26 + level * 2;
       
-      player.health = player.maxHealth;
-      player.x = 70;
-      player.y = H/2;
       boss.x = W - 70;
       boss.y = H/2;
+      bossTargetX = boss.x;
+      bossTargetY = boss.y;
       
       milkBullets = [];
       poopAttacks = [];
-      bossTargetX = boss.x;
-      bossTargetY = boss.y;
       
       levelDisplay.textContent = `УРОВЕНЬ ${level}`;
       updateUI();
@@ -404,9 +424,20 @@
       score = 0;
       player.maxHealth = 100;
       player.health = 100;
+      player.x = 70;
+      player.y = H/2;
       initLevel(1);
       frameCount = 0;
+      isTransitioning = false;
       updateUI();
+    }
+
+    function showLevelTransition(level) {
+      levelTransition.textContent = `⭐ УРОВЕНЬ ${level} ⭐`;
+      levelTransition.style.display = 'block';
+      setTimeout(() => {
+        levelTransition.style.display = 'none';
+      }, 1500);
     }
 
     function nextLevel() {
@@ -414,6 +445,8 @@
         currentLevel++;
         player.health = Math.min(player.maxHealth, player.health + 30);
         initLevel(currentLevel);
+        showLevelTransition(currentLevel);
+        updateUI();
         return true;
       }
       return false;
@@ -425,45 +458,78 @@
       scoreDisplay.textContent = String(score).padStart(3, '0');
     }
 
-    // --- ДЖОЙСТИКИ (мобильное управление) ---
-    function handleJoystickStart(e, type) {
+    // --- МУЛЬТИТАЧ ДЖОЙСТИКИ (работают одновременно) ---
+    function handleTouchStart(e) {
       e.preventDefault();
-      const touch = e.touches[0];
-      if (type === 'move') {
-        moveActive = true;
-        updateJoystick(touch, moveJoystick, moveKnob, (v) => moveVector = v);
-      } else {
-        shootActive = true;
-        updateJoystick(touch, shootJoystick, shootKnob, (v) => shootVector = v);
+      const touches = e.touches;
+      
+      for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        const moveRect = moveJoystick.getBoundingClientRect();
+        const shootRect = shootJoystick.getBoundingClientRect();
+        
+        // Проверяем, попали ли в зону движения
+        if (moveTouchId === null && 
+            touch.clientX >= moveRect.left && touch.clientX <= moveRect.right &&
+            touch.clientY >= moveRect.top && touch.clientY <= moveRect.bottom) {
+          moveTouchId = touch.identifier;
+          updateJoystickPosition(touch, moveJoystick, moveKnob, (v) => moveVector = v);
+        }
+        // Проверяем, попали ли в зону стрельбы
+        else if (shootTouchId === null && 
+                 touch.clientX >= shootRect.left && touch.clientX <= shootRect.right &&
+                 touch.clientY >= shootRect.top && touch.clientY <= shootRect.bottom) {
+          shootTouchId = touch.identifier;
+          updateJoystickPosition(touch, shootJoystick, shootKnob, (v) => shootVector = v);
+        }
       }
     }
 
-    function handleJoystickMove(e, type) {
+    function handleTouchMove(e) {
       e.preventDefault();
-      const touch = e.touches[0];
-      if (type === 'move' && moveActive) {
-        updateJoystick(touch, moveJoystick, moveKnob, (v) => moveVector = v);
-      } else if (type === 'shoot' && shootActive) {
-        updateJoystick(touch, shootJoystick, shootKnob, (v) => shootVector = v);
+      const touches = e.touches;
+      
+      for (let i = 0; i < touches.length; i++) {
+        const touch = touches[i];
+        
+        if (moveTouchId === touch.identifier) {
+          updateJoystickPosition(touch, moveJoystick, moveKnob, (v) => moveVector = v);
+        }
+        else if (shootTouchId === touch.identifier) {
+          updateJoystickPosition(touch, shootJoystick, shootKnob, (v) => shootVector = v);
+        }
       }
     }
 
-    function handleJoystickEnd(e, type) {
+    function handleTouchEnd(e) {
       e.preventDefault();
-      if (type === 'move') {
-        moveActive = false;
+      const touches = e.touches;
+      
+      // Проверяем, какой палец убран
+      let moveStillActive = false;
+      let shootStillActive = false;
+      
+      for (let i = 0; i < touches.length; i++) {
+        if (touches[i].identifier === moveTouchId) moveStillActive = true;
+        if (touches[i].identifier === shootTouchId) shootStillActive = true;
+      }
+      
+      if (!moveStillActive && moveTouchId !== null) {
+        moveTouchId = null;
         moveVector = { x: 0, y: 0 };
         moveKnob.style.left = '30px';
         moveKnob.style.top = '30px';
-      } else {
-        shootActive = false;
+      }
+      
+      if (!shootStillActive && shootTouchId !== null) {
+        shootTouchId = null;
         shootVector = { x: 1, y: 0 };
         shootKnob.style.left = '30px';
         shootKnob.style.top = '30px';
       }
     }
 
-    function updateJoystick(touch, joystick, knob, setVector) {
+    function updateJoystickPosition(touch, joystick, knob, setVector) {
       const rect = joystick.getBoundingClientRect();
       const centerX = rect.left + rect.width/2;
       const centerY = rect.top + rect.height/2;
@@ -480,23 +546,24 @@
       knob.style.left = (30 + dx) + 'px';
       knob.style.top = (30 + dy) + 'px';
       
-      if (dist > 5) {
+      if (dist > 8) {
         setVector({ x: dx / JOY_RADIUS, y: dy / JOY_RADIUS });
       } else {
         setVector({ x: 0, y: 0 });
       }
     }
 
-    // Привязка событий джойстиков
-    moveJoystick.addEventListener('touchstart', (e) => handleJoystickStart(e, 'move'));
-    moveJoystick.addEventListener('touchmove', (e) => handleJoystickMove(e, 'move'));
-    moveJoystick.addEventListener('touchend', (e) => handleJoystickEnd(e, 'move'));
+    // Привязка мультитач событий
+    moveJoystick.addEventListener('touchstart', handleTouchStart, { passive: false });
+    moveJoystick.addEventListener('touchmove', handleTouchMove, { passive: false });
+    moveJoystick.addEventListener('touchend', handleTouchEnd);
+    moveJoystick.addEventListener('touchcancel', handleTouchEnd);
     
-    shootJoystick.addEventListener('touchstart', (e) => handleJoystickStart(e, 'shoot'));
-    shootJoystick.addEventListener('touchmove', (e) => handleJoystickMove(e, 'shoot'));
-    shootJoystick.addEventListener('touchend', (e) => handleJoystickEnd(e, 'shoot'));
+    shootJoystick.addEventListener('touchstart', handleTouchStart, { passive: false });
+    shootJoystick.addEventListener('touchmove', handleTouchMove, { passive: false });
+    shootJoystick.addEventListener('touchend', handleTouchEnd);
+    shootJoystick.addEventListener('touchcancel', handleTouchEnd);
 
-    // --- СТРЕЛЬБА ---
     function shootMilk() {
       if (!gameActive || player.health <= 0) return;
       
@@ -505,6 +572,11 @@
       if (dirX === 0 && dirY === 0) {
         dirX = 1; dirY = 0;
       }
+      
+      // Нормализация
+      const len = Math.sqrt(dirX*dirX + dirY*dirY);
+      dirX /= len;
+      dirY /= len;
       
       milkBullets.push({
         x: player.x + dirX * 18,
@@ -516,7 +588,6 @@
       });
     }
 
-    // --- ИИ БОССА (неравномерное синусоидальное движение) ---
     function updateBossAI() {
       if (!gameActive || boss.health <= 0) return;
       const stats = bossStats[currentLevel];
@@ -557,11 +628,10 @@
       }
     }
 
-    // --- ОБНОВЛЕНИЕ ИГРОКА ---
     function updatePlayer() {
       if (!gameActive || player.health <= 0) return;
       
-      if (moveActive) {
+      if (moveVector.x !== 0 || moveVector.y !== 0) {
         player.x += moveVector.x * PLAYER_SPEED;
         player.y += moveVector.y * PLAYER_SPEED;
       }
@@ -569,12 +639,12 @@
       player.x = Math.max(35, Math.min(180, player.x));
       player.y = Math.max(40, Math.min(H - 40, player.y));
       
-      if (shootActive && frameCount % 10 === 0) {
+      // Автострельба если джойстик стрельбы активен
+      if (shootTouchId !== null && frameCount % 10 === 0) {
         shootMilk();
       }
     }
 
-    // --- СНАРЯДЫ ---
     function updateProjectiles() {
       for (let i = milkBullets.length - 1; i >= 0; i--) {
         let b = milkBullets[i];
@@ -590,8 +660,6 @@
           if (boss.health <= 0) {
             if (!nextLevel()) {
               gameOver(true);
-            } else {
-              updateUI();
             }
           }
           continue;
@@ -616,7 +684,6 @@
       }
     }
 
-    // --- ОТРИСОВКА (светлые спокойные цвета) ---
     function draw() {
       ctx.clearRect(0, 0, W, H);
       
@@ -713,7 +780,6 @@
       ctx.shadowBlur = 0;
     }
 
-    // --- ЦИКЛ ---
     function gameTick() {
       if (!gameActive) return;
       frameCount++;
@@ -726,6 +792,15 @@
 
     function gameOver(won) {
       gameActive = false;
+      moveTouchId = null;
+      shootTouchId = null;
+      moveVector = { x: 0, y: 0 };
+      shootVector = { x: 1, y: 0 };
+      moveKnob.style.left = '30px';
+      moveKnob.style.top = '30px';
+      shootKnob.style.left = '30px';
+      shootKnob.style.top = '30px';
+      
       if (gameLoopId) cancelAnimationFrame(gameLoopId);
       gameOverTitle.textContent = won ? '🏆 ПОБЕДА! 🏆' : '💀 ПОРАЖЕНИЕ 💀';
       gameOverMessage.textContent = `СЧЁТ: ${score}  |  УРОВЕНЬ ${currentLevel}`;
@@ -737,6 +812,17 @@
       gameActive = true;
       startScreen.style.display = 'none';
       gameOverlay.style.display = 'none';
+      levelTransition.style.display = 'none';
+      
+      moveTouchId = null;
+      shootTouchId = null;
+      moveVector = { x: 0, y: 0 };
+      shootVector = { x: 1, y: 0 };
+      moveKnob.style.left = '30px';
+      moveKnob.style.top = '30px';
+      shootKnob.style.left = '30px';
+      shootKnob.style.top = '30px';
+      
       if (gameLoopId) cancelAnimationFrame(gameLoopId);
       gameLoopId = requestAnimationFrame(gameTick);
     }
@@ -744,7 +830,6 @@
     startBtn.addEventListener('click', startGame);
     restartBtn.addEventListener('click', startGame);
     
-    // Предотвращение скролла на тач-устройствах
     document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
     
     resetGame();
