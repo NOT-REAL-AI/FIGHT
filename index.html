@@ -2,918 +2,754 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>АУРА · ТРИГОНОМЕТРИЯ · ТРИ СЕГМЕНТА</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>🥛 МОЛОЧНАЯ БИТВА · БОСС-ФАЙТ</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', 'Montserrat', system-ui, sans-serif;
     }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 25%, #d4e8ff 50%, #b8d9ff 75%, #a0c8ff 100%);
+      background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      font-family: 'Courier New', monospace;
       position: relative;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
+    /* Аура эффекты */
     body::before {
       content: "";
       position: absolute;
-      width: 80vw;
-      height: 80vw;
-      max-width: 900px;
-      max-height: 900px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(100, 180, 255, 0.4) 50%, transparent 80%);
-      filter: blur(100px);
-      top: -10%;
-      left: -10%;
-      z-index: 0;
-      animation: auraFloat1 16s infinite alternate ease-in-out;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 100, 200, 0.15) 0%, transparent 60%);
+      filter: blur(80px);
+      animation: auraPulse 8s infinite alternate;
     }
 
     body::after {
       content: "";
       position: absolute;
-      width: 70vw;
-      height: 70vw;
-      max-width: 800px;
-      max-height: 800px;
-      background: radial-gradient(circle, rgba(200, 230, 255, 0.8) 0%, rgba(0, 100, 200, 0.3) 60%, transparent 90%);
-      filter: blur(110px);
-      bottom: -5%;
-      right: -5%;
-      z-index: 0;
-      animation: auraFloat2 20s infinite alternate ease-in-out;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 70% 60%, rgba(100, 200, 255, 0.15) 0%, transparent 60%);
+      filter: blur(80px);
+      animation: auraPulse 10s infinite alternate-reverse;
     }
 
-    @keyframes auraFloat1 {
-      0% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-      100% { transform: translate(8%, 6%) scale(1.2); opacity: 1; }
-    }
-    @keyframes auraFloat2 {
-      0% { transform: translate(0, 0) scale(1); opacity: 0.7; }
-      100% { transform: translate(-5%, -8%) scale(1.3); opacity: 1; }
+    @keyframes auraPulse {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.2); }
     }
 
-    .calculator {
+    .game-container {
       position: relative;
       z-index: 10;
-      max-width: 950px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      border-radius: 48px;
-      padding: 30px 28px 36px;
-      box-shadow: 0 25px 50px -8px rgba(0, 50, 100, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset, 0 0 40px rgba(0, 150, 255, 0.3);
-      transition: box-shadow 0.3s;
-    }
-
-    .calculator:hover {
-      box-shadow: 0 30px 60px -5px rgba(0, 70, 150, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.8) inset, 0 0 60px rgba(0, 180, 255, 0.5);
-    }
-
-    .title-block {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    .glow-title {
-      font-size: 2.5rem;
-      font-weight: 800;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #0066cc, #0099ff, #00ccff, #66b3ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px #0099ff;
-      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-      word-break: break-word;
-    }
-
-    .subaura {
-      color: #004c99;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      font-size: 0.9rem;
-      margin-top: 6px;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-      opacity: 0.9;
-    }
-
-    .mode-selector {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-
-    .mode-btn {
-      padding: 12px 30px;
+      width: 1000px;
+      max-width: 100%;
+      background: rgba(10, 5, 20, 0.7);
+      backdrop-filter: blur(15px);
       border-radius: 40px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border: 2px solid #4da6ff;
-      background: rgba(255, 255, 255, 0.6);
-      color: #0059b3;
-      cursor: pointer;
-      transition: all 0.2s;
-      backdrop-filter: blur(8px);
+      padding: 25px;
+      border: 2px solid rgba(255, 200, 255, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(200, 100, 255, 0.3);
     }
 
-    .mode-btn.active {
-      background: #0066cc;
-      color: white;
-      border-color: #ffffff;
-      box-shadow: 0 0 20px #66b3ff;
-    }
-
-    .selector-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px 18px;
-      margin-bottom: 28px;
-      justify-content: center;
-    }
-
-    .select-wrapper {
-      flex: 1 1 200px;
-      min-width: 170px;
-    }
-
-    .label-icon {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #0059b3;
-      margin-bottom: 8px;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    }
-
-    .neo-select {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.9);
-      border: 2px solid #4da6ff;
-      border-radius: 40px;
-      padding: 14px 20px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #003366;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 12px rgba(0, 100, 200, 0.2), 0 0 15px rgba(255, 255, 255, 0.5) inset;
-      transition: all 0.2s;
-      outline: none;
-      cursor: pointer;
-    }
-
-    .neo-select option {
-      background: #ffffff;
-      color: #003366;
-      font-weight: 500;
-    }
-
-    .neo-select:hover {
-      border-color: #0080ff;
-      box-shadow: 0 0 20px #66b3ff, 0 4px 12px rgba(0, 100, 200, 0.3);
-    }
-
-    /* ТРИ СЕГМЕНТА ВВОДА */
-    .three-segments {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .segment {
-      flex: 1 1 180px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 30px;
-      padding: 18px 15px;
-      border: 2px solid rgba(77, 166, 255, 0.4);
-      backdrop-filter: blur(8px);
-      transition: all 0.2s;
-    }
-
-    .segment:hover {
-      border-color: #4da6ff;
-      background: rgba(255, 255, 255, 0.7);
-      box-shadow: 0 4px 15px rgba(0, 100, 200, 0.15);
-    }
-
-    .segment-title {
-      text-align: center;
-      color: #0059b3;
-      font-weight: 700;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 15px;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    }
-
-    .segment-content {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .input-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .segment-input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.9);
-      border: 2px solid #80b3ff;
-      border-radius: 30px;
-      padding: 12px 15px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #003366;
-      text-align: center;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    .segment-input:focus {
-      border-color: #0066cc;
-      box-shadow: 0 0 15px #99ccff;
-    }
-
-    .segment-input::placeholder {
-      color: #a0c4e8;
-      font-size: 0.9rem;
-    }
-
-    .sqrt-symbol {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #0059b3;
-    }
-
-    .pi-checkbox {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    .pi-checkbox label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #0059b3;
-    }
-
-    .pi-checkbox input[type="checkbox"] {
-      width: 22px;
-      height: 22px;
-      cursor: pointer;
-      accent-color: #0066cc;
-    }
-
-    .degree-presets {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .preset-btn {
-      background: rgba(255, 255, 255, 0.7);
-      border: 1.5px solid #66b3ff;
-      border-radius: 20px;
-      padding: 8px 5px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #004c99;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-align: center;
-    }
-
-    .preset-btn:hover {
-      background: #4da6ff;
-      color: white;
-      border-color: #ffffff;
-    }
-
-    .quarter-section {
-      margin: 20px 0 26px;
-    }
-
-    .quarter-title {
-      color: #0059b3;
-      margin-bottom: 16px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    }
-
-    .quarter-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-    }
-
-    .quarter-btn {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(8px);
-      border: 2px solid #80b3ff;
-      border-radius: 60px;
-      padding: 16px 5px;
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #004c99;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-      box-shadow: 0 6px 0 #b3d4ff, 0 4px 12px rgba(0, 100, 200, 0.2);
-      transition: all 0.15s;
-      cursor: pointer;
-      text-align: center;
-      letter-spacing: 2px;
-    }
-
-    .quarter-btn.active {
-      background: linear-gradient(145deg, #4da6ff, #0066cc);
-      border-color: #ffffff;
-      box-shadow: 0 0 25px #66b3ff, 0 0 15px #ffffff, 0 4px 0 #004c99;
-      color: white;
-      transform: scale(1.02);
-      text-shadow: 0 0 20px white;
-    }
-
-    .calc-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #0080ff, #0066cc);
-      border: 2px solid #ffffff;
-      border-radius: 60px;
-      padding: 18px 10px;
-      font-size: 1.8rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      box-shadow: 0 12px 0 #004c99, 0 8px 25px rgba(0, 100, 200, 0.4), 0 0 30px #66b3ff;
-      margin: 16px 0 24px;
-      cursor: pointer;
-      transition: 0.08s linear;
-    }
-
-    .calc-btn:active {
-      transform: translateY(6px);
-      box-shadow: 0 6px 0 #004c99, 0 8px 25px rgba(0, 100, 200, 0.4), 0 0 40px #99ccff;
-    }
-
-    .results-panel {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      border-radius: 40px;
-      padding: 24px 22px;
-      border: 2px solid rgba(77, 166, 255, 0.5);
-      box-shadow: 0 8px 20px rgba(0, 100, 200, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.8);
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px 22px;
-    }
-
-    .result-item {
+    .game-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      border-bottom: 2px dashed #4da6ff;
-      padding-bottom: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 0 10px;
     }
 
-    .func-name {
-      font-size: 1.7rem;
-      font-weight: 700;
-      background: linear-gradient(145deg, #0066cc, #0099ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    .health-bar {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
-    .func-value {
-      font-size: 2rem;
-      font-weight: 800;
-      font-family: 'Courier New', monospace;
-      color: #003366;
-      text-shadow: 0 0 15px #ffffff, 0 0 5px rgba(0, 150, 255, 0.3);
-      letter-spacing: 2px;
-      word-break: break-word;
-      text-align: right;
+    .health-label {
+      color: #ffccdd;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 10px #ff69b4;
     }
 
-    .angle-display {
-      text-align: center;
-      margin-bottom: 16px;
-      padding: 8px;
-      background: rgba(77, 166, 255, 0.2);
+    .health-fill {
+      width: 200px;
+      height: 25px;
+      background: rgba(0, 0, 0, 0.5);
       border-radius: 30px;
-      color: #0059b3;
-      font-weight: 600;
-      font-size: 1.1rem;
+      overflow: hidden;
+      border: 2px solid #ff99cc;
     }
 
-    .error-message {
-      color: #cc0000;
-      background: rgba(255, 240, 240, 0.9);
-      border-radius: 30px;
-      padding: 10px 18px;
-      margin-top: 16px;
-      font-weight: 600;
-      backdrop-filter: blur(5px);
-      border-left: 8px solid #ff3333;
-      box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
+    .health-fill span {
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ff3366, #ff6699, #ff99cc);
+      transition: width 0.2s;
+      box-shadow: 0 0 15px #ff3366;
     }
 
-    .info-note {
-      color: #0059b3;
-      font-size: 0.9rem;
-      margin-top: 12px;
-      text-align: right;
-      opacity: 0.9;
-      font-weight: 500;
+    .boss-health .health-fill span {
+      background: linear-gradient(90deg, #9933ff, #cc66ff, #ee99ff);
     }
 
-    .signature {
-      margin-top: 28px;
-      text-align: center;
-      color: #0066cc;
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 6px;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    }
-
-    .divider {
-      text-align: center;
-      color: #4da6ff;
+    .score {
+      color: #ffd700;
       font-size: 1.5rem;
-      font-weight: 300;
-      margin: 5px 0;
+      font-weight: bold;
+      text-shadow: 0 0 20px #ffd700;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(180deg, #1a1a3e 0%, #2d1b4e 50%, #1a0a2e 100%);
+      border-radius: 30px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(100, 0, 200, 0.2);
+      cursor: none;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      color: #ccbbff;
+      font-size: 1rem;
+      padding: 0 10px;
+    }
+
+    .controls span {
+      background: rgba(50, 20, 70, 0.6);
+      padding: 8px 20px;
+      border-radius: 40px;
+      border: 1px solid #9966ff;
+      backdrop-filter: blur(5px);
+    }
+
+    .game-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+    }
+
+    .game-over-card {
+      background: linear-gradient(135deg, #2a1a4e, #1a0a3e);
+      padding: 40px 60px;
+      border-radius: 60px;
+      text-align: center;
+      border: 3px solid #cc66ff;
+      box-shadow: 0 0 80px #9933ff;
+    }
+
+    .game-over-card h2 {
+      color: #ffccff;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px #ff66cc;
+    }
+
+    .game-over-card p {
+      color: #ffd700;
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, #ff6699, #cc33ff);
+      border: none;
+      padding: 20px 50px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      border-radius: 50px;
+      cursor: pointer;
+      border: 2px solid #ffccff;
+      box-shadow: 0 10px 0 #660099, 0 0 30px #ff66cc;
+      transition: 0.1s;
+      text-transform: uppercase;
+    }
+
+    .restart-btn:active {
+      transform: translateY(7px);
+      box-shadow: 0 3px 0 #660099, 0 0 40px #ff66cc;
+    }
+
+    .start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    .start-btn {
+      background: linear-gradient(135deg, #66ccff, #9966ff);
+      border: none;
+      padding: 25px 70px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      border-radius: 60px;
+      cursor: pointer;
+      border: 3px solid #ccddff;
+      box-shadow: 0 15px 0 #336699, 0 0 50px #66aaff;
+      transition: 0.1s;
+      text-transform: uppercase;
+      letter-spacing: 5px;
+    }
+
+    .start-btn:active {
+      transform: translateY(10px);
+      box-shadow: 0 5px 0 #336699, 0 0 60px #66aaff;
     }
   </style>
 </head>
 <body>
-
-<div class="calculator">
-  <div class="title-block">
-    <div class="glow-title">⚡ АУРА · ТРИГОНОМЕТРИЯ ⚡</div>
-    <div class="subaura">три сегмента точности</div>
-  </div>
-
-  <!-- Переключатель режима -->
-  <div class="mode-selector">
-    <button class="mode-btn active" data-mode="value">📐 ЗНАЮ ФУНКЦИЮ</button>
-    <button class="mode-btn" data-mode="angle">📏 ЗНАЮ УГОЛ</button>
-  </div>
-
-  <div class="selector-group" id="functionSelectGroup">
-    <div class="select-wrapper">
-      <span class="label-icon">🌀 ИЗВЕСТНАЯ ФУНКЦИЯ</span>
-      <select id="funcSelect" class="neo-select">
-        <option value="sin" selected>sin α · синус</option>
-        <option value="cos">cos α · косинус</option>
-        <option value="tan">tg α · тангенс</option>
-        <option value="cot">ctg α · котангенс</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- ТРИ СЕГМЕНТА ВВОДА -->
-  <div style="margin-bottom: 10px;">
-    <div class="label-icon">💎 КОНСТРУКТОР ЗНАЧЕНИЯ / УГЛА</div>
-  </div>
-  
-  <div class="three-segments">
-    <!-- СЕГМЕНТ 1: КОРЕНЬ И МНОЖИТЕЛЬ -->
-    <div class="segment">
-      <div class="segment-title">🔢 КОРЕНЬ & МНОЖ.</div>
-      <div class="segment-content">
-        <div class="input-row">
-          <span class="sqrt-symbol">√</span>
-          <input type="text" id="sqrtInput" class="segment-input" placeholder="число" value="">
-        </div>
-        <div class="divider">×</div>
-        <input type="text" id="multiplierInput" class="segment-input" placeholder="a/b или число" value="1">
+<div class="game-container">
+  <div class="game-header">
+    <div class="health-bar">
+      <span class="health-label">🥛 МАЛЬЧИК</span>
+      <div class="health-fill">
+        <span id="playerHealthBar" style="width: 100%"></span>
       </div>
     </div>
-
-    <!-- СЕГМЕНТ 2: ЧИСЛО π -->
-    <div class="segment">
-      <div class="segment-title">🥧 ЧИСЛО π</div>
-      <div class="segment-content">
-        <div class="pi-checkbox">
-          <label>
-            <input type="checkbox" id="piCheckbox"> 
-            <span style="font-size: 2.5rem; font-weight: 700;">π</span>
-          </label>
-        </div>
-        <div class="divider" style="margin-top: 15px;">×</div>
-        <div style="text-align: center; color: #0059b3; margin-top: 10px;">
-          <span style="font-size: 0.9rem;">множитель π</span><br>
-          <input type="text" id="piMultiplierInput" class="segment-input" placeholder="коэфф." value="1" style="width: 80%; margin-top: 5px;">
-        </div>
-      </div>
+    <div class="score">
+      <span id="scoreDisplay">000</span>
     </div>
-
-    <!-- СЕГМЕНТ 3: ГРАДУСЫ -->
-    <div class="segment">
-      <div class="segment-title">📐 ГРАДУСЫ</div>
-      <div class="segment-content">
-        <input type="text" id="degreesInput" class="segment-input" placeholder="например 60" value="">
-        <div class="degree-presets">
-          <button class="preset-btn" data-degrees="30">30°</button>
-          <button class="preset-btn" data-degrees="45">45°</button>
-          <button class="preset-btn" data-degrees="60">60°</button>
-          <button class="preset-btn" data-degrees="90">90°</button>
-          <button class="preset-btn" data-degrees="180">180°</button>
-          <button class="preset-btn" data-degrees="270">270°</button>
-        </div>
+    <div class="health-bar boss-health">
+      <span class="health-label">👾 БОСС</span>
+      <div class="health-fill">
+        <span id="bossHealthBar" style="width: 100%"></span>
       </div>
     </div>
   </div>
 
-  <!-- ЧЕТВЕРТЬ (только для режима функции) -->
-  <div class="quarter-section" id="quarterSection">
-    <div class="quarter-title">
-      <span>🧿 ЧЕТВЕРТЬ УГЛА α</span>
-      <span style="font-size:0.8rem; opacity:0.8;">(I · II · III · IV)</span>
-    </div>
-    <div class="quarter-grid">
-      <div class="quarter-btn active" data-quarter="1">Ⅰ</div>
-      <div class="quarter-btn" data-quarter="2">Ⅱ</div>
-      <div class="quarter-btn" data-quarter="3">Ⅲ</div>
-      <div class="quarter-btn" data-quarter="4">Ⅳ</div>
-    </div>
+  <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+  <div class="controls">
+    <span>←↓↑→ / WASD — ДВИЖЕНИЕ</span>
+    <span>🖱️ ЛКМ / ПРОБЕЛ — СТРЕЛЬБА МОЛОКОМ</span>
+    <span>💩 УВОРАЧИВАЙСЯ ОТ КАКАШЕК!</span>
   </div>
+</div>
 
-  <button class="calc-btn" id="calculateBtn">ВЫЧИСЛИТЬ</button>
+<div class="start-screen" id="startScreen">
+  <button class="start-btn" id="startBtn">🥛 СТАРТ 🥛</button>
+</div>
 
-  <!-- РЕЗУЛЬТАТЫ -->
-  <div class="results-panel">
-    <div class="angle-display" id="angleDisplay"></div>
-    <div class="result-grid">
-      <div class="result-item"><span class="func-name">sin α</span><span class="func-value" id="resSin">—</span></div>
-      <div class="result-item"><span class="func-name">cos α</span><span class="func-value" id="resCos">—</span></div>
-      <div class="result-item"><span class="func-name">tg α</span><span class="func-value" id="resTan">—</span></div>
-      <div class="result-item"><span class="func-name">ctg α</span><span class="func-value" id="resCot">—</span></div>
-    </div>
-    <div id="errorMsg" class="error-message"></div>
-    <div class="info-note">✦ корни · π · градусы ✦</div>
+<div class="game-overlay" id="gameOverlay">
+  <div class="game-over-card">
+    <h2 id="gameOverTitle">ИГРА ОКОНЧЕНА</h2>
+    <p id="gameOverMessage">СЧЁТ: 000</p>
+    <button class="restart-btn" id="restartBtn">ИГРАТЬ СНОВА</button>
   </div>
-
-  <div class="signature">АУРА · ТРИ СЕГМЕНТА</div>
 </div>
 
 <script>
-  (function(){
-    "use strict";
+  (function() {
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const startScreen = document.getElementById('startScreen');
+    const gameOverlay = document.getElementById('gameOverlay');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const playerHealthBar = document.getElementById('playerHealthBar');
+    const bossHealthBar = document.getElementById('bossHealthBar');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const gameOverTitle = document.getElementById('gameOverTitle');
+    const gameOverMessage = document.getElementById('gameOverMessage');
 
-    const modeBtns = document.querySelectorAll('.mode-btn');
-    const functionSelectGroup = document.getElementById('functionSelectGroup');
-    const quarterSection = document.getElementById('quarterSection');
+    // Размеры
+    const W = 960, H = 540;
     
-    const funcSelect = document.getElementById('funcSelect');
-    const sqrtInput = document.getElementById('sqrtInput');
-    const multiplierInput = document.getElementById('multiplierInput');
-    const piCheckbox = document.getElementById('piCheckbox');
-    const piMultiplierInput = document.getElementById('piMultiplierInput');
-    const degreesInput = document.getElementById('degreesInput');
+    // Игровые объекты
+    let player = { x: 150, y: H/2, radius: 18, health: 100, maxHealth: 100 };
+    let boss = { x: W - 150, y: H/2, radius: 30, health: 100, maxHealth: 100 };
     
-    const quarterBtns = document.querySelectorAll('.quarter-btn');
-    const calcBtn = document.getElementById('calculateBtn');
+    // Снаряды
+    let milkBullets = [];
+    let poopAttacks = [];
+    
+    // Параметры
+    let score = 0;
+    let gameActive = false;
+    let gameLoopId = null;
+    let bossMoveTimer = 0;
+    let bossTargetX = boss.x, bossTargetY = boss.y;
+    let bossShootTimer = 0;
+    let frameCount = 0;
+    
+    // Управление
+    const keys = {
+      ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false,
+      KeyA: false, KeyD: false, KeyW: false, KeyS: false,
+      Space: false
+    };
+    
+    let mousePressed = false;
+    let mouseX = 0, mouseY = 0;
+    
+    // Скорости
+    const PLAYER_SPEED = 4.5;
+    const BULLET_SPEED = 7;
+    const POOP_SPEED = 4.5;
+    const BOSS_SPEED = 1.2;
 
-    const resSin = document.getElementById('resSin');
-    const resCos = document.getElementById('resCos');
-    const resTan = document.getElementById('resTan');
-    const resCot = document.getElementById('resCot');
-    const angleDisplay = document.getElementById('angleDisplay');
-    const errorMsgDiv = document.getElementById('errorMsg');
-
-    let currentMode = 'value';
-    let currentQuarter = 1;
-
-    // Переключение режима
-    modeBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        modeBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentMode = btn.dataset.mode;
-        
-        if (currentMode === 'value') {
-          functionSelectGroup.style.display = 'block';
-          quarterSection.style.display = 'block';
-        } else {
-          functionSelectGroup.style.display = 'none';
-          quarterSection.style.display = 'none';
-        }
-      });
-    });
-
-    // Пресеты градусов
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        degreesInput.value = btn.dataset.degrees;
-      });
-    });
-
-    function setActiveQuarter(quarter) {
-      quarterBtns.forEach(btn => {
-        const q = parseInt(btn.getAttribute('data-quarter'), 10);
-        btn.classList.toggle('active', q === quarter);
-      });
-      currentQuarter = quarter;
+    // --- ИНИЦИАЛИЗАЦИЯ ---
+    function resetGame() {
+      player = { x: 120, y: H/2, radius: 18, health: 100, maxHealth: 100 };
+      boss = { x: W - 120, y: H/2, radius: 32, health: 100, maxHealth: 100 };
+      milkBullets = [];
+      poopAttacks = [];
+      score = 0;
+      bossMoveTimer = 0;
+      bossShootTimer = 0;
+      frameCount = 0;
+      bossTargetX = boss.x;
+      bossTargetY = boss.y;
+      updateUI();
     }
 
-    quarterBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        setActiveQuarter(parseInt(this.getAttribute('data-quarter'), 10));
-      });
-    });
+    function updateUI() {
+      playerHealthBar.style.width = Math.max(0, (player.health / player.maxHealth) * 100) + '%';
+      bossHealthBar.style.width = Math.max(0, (boss.health / boss.maxHealth) * 100) + '%';
+      scoreDisplay.textContent = String(score).padStart(3, '0');
+    }
 
-    // Парсинг дроби
-    function parseFraction(str) {
-      str = str.trim();
-      if (str === '') return 1;
+    // --- ВВОД ---
+    function handleKeyDown(e) {
+      if (!gameActive) return;
+      if (e.code in keys) {
+        keys[e.code] = true;
+        e.preventDefault();
+      }
+      if (e.code === 'Space') {
+        keys.Space = true;
+        e.preventDefault();
+        shootMilk();
+      }
+    }
+
+    function handleKeyUp(e) {
+      if (e.code in keys) {
+        keys[e.code] = false;
+        e.preventDefault();
+      }
+      if (e.code === 'Space') {
+        keys.Space = false;
+        e.preventDefault();
+      }
+    }
+
+    function handleMouseMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      mouseX = (e.clientX - rect.left) * scaleX;
+      mouseY = (e.clientY - rect.top) * scaleY;
+    }
+
+    function handleMouseDown(e) {
+      if (!gameActive) return;
+      if (e.button === 0) {
+        mousePressed = true;
+        shootMilk();
+        e.preventDefault();
+      }
+    }
+
+    function handleMouseUp(e) {
+      if (e.button === 0) {
+        mousePressed = false;
+      }
+    }
+
+    function shootMilk() {
+      if (!gameActive) return;
+      if (player.health <= 0) return;
       
-      if (str.includes('/')) {
-        let parts = str.split('/');
-        if (parts.length !== 2) throw new Error('Дробь должна быть вида a/b');
-        
-        let numerator = parseFloat(parts[0].trim());
-        let denominator = parseFloat(parts[1].trim());
-        
-        if (isNaN(numerator) || isNaN(denominator)) {
-          throw new Error('Неверный формат дроби');
-        }
-        if (denominator === 0) throw new Error('Деление на ноль');
-        
-        return numerator / denominator;
+      // Направление к мыши или вправо по умолчанию
+      let targetX = mouseX || player.x + 100;
+      let targetY = mouseY || player.y;
+      
+      let dx = targetX - player.x;
+      let dy = targetY - player.y;
+      let len = Math.sqrt(dx*dx + dy*dy);
+      if (len < 0.001) {
+        dx = 1; dy = 0;
       } else {
-        let val = parseFloat(str);
-        if (isNaN(val)) throw new Error('Введите число или дробь');
-        return val;
+        dx /= len; dy /= len;
       }
+      
+      milkBullets.push({
+        x: player.x + dx * 20,
+        y: player.y + dy * 10,
+        vx: dx * BULLET_SPEED,
+        vy: dy * BULLET_SPEED,
+        radius: 8,
+        life: 120
+      });
     }
 
-    // Получение итогового значения из трёх сегментов
-    function getNumericValue() {
-      // Сегмент 1: корень и множитель
-      let sqrtStr = sqrtInput.value.trim();
-      let sqrtNum = null;
-      if (sqrtStr !== '') {
-        sqrtNum = parseFloat(sqrtStr);
-        if (isNaN(sqrtNum) || sqrtNum < 0) throw new Error('Под корнем ≥ 0');
-      }
+    // --- БОСС: СЛУЧАЙНОЕ НЕРАВНОМЕРНОЕ ДВИЖЕНИЕ (синусоидальное) ---
+    function updateBossAI() {
+      if (!gameActive) return;
+      if (boss.health <= 0) return;
       
-      let multStr = multiplierInput.value.trim();
-      if (multStr === '') multStr = '1';
-      let multiplier = parseFraction(multStr);
+      bossMoveTimer++;
       
-      let value = multiplier;
-      if (sqrtNum !== null) {
-        value *= Math.sqrt(sqrtNum);
-      }
-      
-      // Сегмент 2: π
-      if (piCheckbox.checked) {
-        let piMultStr = piMultiplierInput.value.trim();
-        if (piMultStr === '') piMultStr = '1';
-        let piMultiplier = parseFraction(piMultStr);
-        value *= piMultiplier * Math.PI;
-      }
-      
-      // Сегмент 3: градусы (конвертируем в радианы)
-      let degStr = degreesInput.value.trim();
-      if (degStr !== '') {
-        let degrees = parseFraction(degStr);
-        value = degrees * Math.PI / 180;
-      }
-      
-      return value;
-    }
-
-    function toFractionString(x, maxDen = 100) {
-      if (Math.abs(x) < 1e-12) return '0';
-      const sign = x < 0 ? -1 : 1;
-      x = Math.abs(x);
-      
-      let bestNum = 1, bestDen = 1;
-      let bestDiff = Math.abs(x - 1);
-      
-      for (let den = 1; den <= maxDen; den++) {
-        let num = Math.round(x * den);
-        let diff = Math.abs(x - num / den);
-        if (diff < bestDiff) {
-          bestDiff = diff;
-          bestNum = num;
-          bestDen = den;
-        }
-      }
-      
-      const gcd = (a, b) => b ? gcd(b, a % b) : a;
-      const div = gcd(bestNum, bestDen);
-      bestNum /= div;
-      bestDen /= div;
-      
-      if (bestDen === 1) return (sign * bestNum).toString();
-      return `${sign * bestNum}/${bestDen}`;
-    }
-
-    function formatExact(num) {
-      if (num === null || !isFinite(num)) {
-        if (num === Infinity) return '∞';
-        if (num === -Infinity) return '-∞';
-        return '—';
-      }
-      
-      const sign = num < 0 ? -1 : 1;
-      const absNum = Math.abs(num);
-      if (absNum < 1e-12) return '0';
-      
-      // Точные значения
-      const exactValues = {
-        0: '0',
-        0.5: '1/2',
-        [Math.sqrt(2)/2]: '√2/2',
-        [Math.sqrt(3)/2]: '√3/2',
-        1: '1',
-        [Math.sqrt(3)]: '√3',
-        [1/Math.sqrt(3)]: '1/√3',
-        [Math.sqrt(2)]: '√2',
-        [1/Math.sqrt(2)]: '1/√2'
-      };
-      
-      for (let [val, str] of Object.entries(exactValues)) {
-        if (Math.abs(absNum - parseFloat(val)) < 1e-10) {
-          return (sign === -1 ? '-' : '') + str;
-        }
-      }
-      
-      // Для углов с π
-      let rational = absNum;
-      if (Math.abs(rational - Math.PI) < 1e-10) return sign === -1 ? '-π' : 'π';
-      
-      return (sign === -1 ? '-' : '') + absNum.toFixed(6).replace(/\.?0+$/, '');
-    }
-
-    function getSigns(q) {
-      if (q === 1) return { sin: 1, cos: 1, tan: 1, cot: 1 };
-      if (q === 2) return { sin: 1, cos: -1, tan: -1, cot: -1 };
-      if (q === 3) return { sin: -1, cos: -1, tan: 1, cot: 1 };
-      return { sin: -1, cos: 1, tan: -1, cot: -1 };
-    }
-
-    function computeFromAngle(angle) {
-      const sin = Math.sin(angle);
-      const cos = Math.cos(angle);
-      const tan = Math.tan(angle);
-      const cot = 1 / tan;
-      
-      return { sin, cos, tan, cot };
-    }
-
-    function computeFromValue(knownFunc, numVal, quarter) {
-      const signs = getSigns(quarter);
-      const eps = 1e-10;
-      let sin = null, cos = null, tan = null, cot = null;
-      
-      if (knownFunc === 'sin') {
-        if (Math.abs(numVal) > 1.000001) {
-          throw new Error(`|sin α| ≤ 1 (получено ${numVal.toFixed(6)})`);
-        }
-        sin = Math.max(-1, Math.min(1, numVal));
-        const cos2 = 1 - sin * sin;
-        cos = Math.sqrt(Math.abs(cos2)) * signs.cos;
-        tan = (Math.abs(cos) < eps) ? (sin >= 0 ? Infinity : -Infinity) : sin / cos;
-        cot = (Math.abs(sin) < eps) ? (cos >= 0 ? Infinity : -Infinity) : cos / sin;
+      // Каждые 40 кадров меняем цель с синусоидальным смещением
+      if (bossMoveTimer % 40 === 0) {
+        // Базовая цель — двигаться к игроку, но с большим случайным смещением
+        let angleToPlayer = Math.atan2(player.y - boss.y, player.x - boss.x);
+        let distToPlayer = Math.hypot(player.x - boss.x, player.y - boss.y);
         
-      } else if (knownFunc === 'cos') {
-        if (Math.abs(numVal) > 1.000001) {
-          throw new Error(`|cos α| ≤ 1 (получено ${numVal.toFixed(6)})`);
-        }
-        cos = Math.max(-1, Math.min(1, numVal));
-        const sin2 = 1 - cos * cos;
-        sin = Math.sqrt(Math.abs(sin2)) * signs.sin;
-        tan = (Math.abs(cos) < eps) ? (sin >= 0 ? Infinity : -Infinity) : sin / cos;
-        cot = (Math.abs(sin) < eps) ? (cos >= 0 ? Infinity : -Infinity) : cos / sin;
+        // Добавляем синусоидальную неравномерность
+        let waveX = Math.sin(frameCount * 0.05) * 120 + Math.cos(frameCount * 0.03) * 80;
+        let waveY = Math.cos(frameCount * 0.04) * 100 + Math.sin(frameCount * 0.06) * 90;
         
-      } else if (knownFunc === 'tan') {
-        tan = numVal;
-        if (!isFinite(tan)) throw new Error('tg α должен быть числом');
-        const tan2 = tan * tan;
-        const cos2 = 1 / (1 + tan2);
-        cos = Math.sqrt(cos2) * signs.cos;
-        sin = tan * cos;
-        cot = (Math.abs(tan) < eps) ? (cos >= 0 ? Infinity : -Infinity) : 1 / tan;
+        // Случайное смещение
+        let randomOffset = 70;
+        bossTargetX = player.x + waveX + (Math.random() - 0.5) * randomOffset;
+        bossTargetY = player.y + waveY + (Math.random() - 0.5) * randomOffset;
         
-      } else {
-        cot = numVal;
-        if (!isFinite(cot)) throw new Error('ctg α должен быть числом');
-        if (Math.abs(cot) < eps) {
-          tan = (cot >= 0) ? Infinity : -Infinity;
-        } else {
-          tan = 1 / cot;
-        }
-        const cot2 = cot * cot;
-        const sin2 = 1 / (1 + cot2);
-        sin = Math.sqrt(sin2) * signs.sin;
-        cos = sin * cot;
+        // Ограничиваем арену
+        bossTargetX = Math.max(400, Math.min(W - 50, bossTargetX));
+        bossTargetY = Math.max(60, Math.min(H - 60, bossTargetY));
       }
       
-      return { sin, cos, tan, cot };
-    }
-
-    function onCalculate() {
-      errorMsgDiv.textContent = '';
+      // Плавное движение к цели
+      let dx = bossTargetX - boss.x;
+      let dy = bossTargetY - boss.y;
+      let dist = Math.hypot(dx, dy);
+      if (dist > 2) {
+        boss.x += (dx / dist) * BOSS_SPEED * (0.8 + 0.4 * Math.sin(frameCount * 0.1));
+        boss.y += (dy / dist) * BOSS_SPEED * (0.8 + 0.4 * Math.cos(frameCount * 0.07));
+      }
       
-      try {
-        const value = getNumericValue();
-        let results;
-        
-        if (currentMode === 'angle' || degreesInput.value.trim() !== '') {
-          // Если есть градусы или режим угла — считаем от угла
-          results = computeFromAngle(value);
+      // Стрельба какашками (3-5 штук залпом)
+      bossShootTimer++;
+      if (bossShootTimer > 35 && boss.health > 0) {
+        let bulletCount = 3 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < bulletCount; i++) {
+          let angle = Math.atan2(player.y - boss.y, player.x - boss.x);
+          angle += (i - (bulletCount-1)/2) * 0.3 + (Math.random() - 0.5) * 0.4;
           
-          let angleStr = '';
-          if (degreesInput.value.trim() !== '') {
-            angleStr = `${degreesInput.value}° = ${(value * 180 / Math.PI).toFixed(2)}°`;
-          } else {
-            angleStr = `${value.toFixed(4)} рад`;
+          let speedVariation = POOP_SPEED * (0.8 + Math.random() * 0.7);
+          poopAttacks.push({
+            x: boss.x,
+            y: boss.y,
+            vx: Math.cos(angle) * speedVariation,
+            vy: Math.sin(angle) * speedVariation,
+            radius: 10,
+            life: 150
+          });
+        }
+        bossShootTimer = 0;
+      }
+    }
+
+    // --- ОБНОВЛЕНИЕ ИГРОКА ---
+    function updatePlayer() {
+      if (!gameActive) return;
+      if (player.health <= 0) {
+        gameOver(false);
+        return;
+      }
+      
+      let moveX = 0, moveY = 0;
+      if (keys.ArrowLeft || keys.KeyA) moveX -= 1;
+      if (keys.ArrowRight || keys.KeyD) moveX += 1;
+      if (keys.ArrowUp || keys.KeyW) moveY -= 1;
+      if (keys.ArrowDown || keys.KeyS) moveY += 1;
+      
+      if (moveX !== 0 || moveY !== 0) {
+        let len = Math.sqrt(moveX*moveX + moveY*moveY);
+        moveX /= len;
+        moveY /= len;
+        player.x += moveX * PLAYER_SPEED;
+        player.y += moveY * PLAYER_SPEED;
+      }
+      
+      // Границы
+      player.x = Math.max(40, Math.min(350, player.x));
+      player.y = Math.max(40, Math.min(H - 40, player.y));
+      
+      // Авто-стрельба если зажат пробел или мышь
+      if ((keys.Space || mousePressed) && frameCount % 8 === 0) {
+        shootMilk();
+      }
+    }
+
+    // --- ОБНОВЛЕНИЕ СНАРЯДОВ ---
+    function updateProjectiles() {
+      // Молоко
+      for (let i = milkBullets.length - 1; i >= 0; i--) {
+        let b = milkBullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        b.life--;
+        
+        // Попадание в босса
+        if (boss.health > 0) {
+          let dist = Math.hypot(b.x - boss.x, b.y - boss.y);
+          if (dist < boss.radius + b.radius) {
+            boss.health = Math.max(0, boss.health - 8);
+            score += 10;
+            updateUI();
+            milkBullets.splice(i, 1);
+            if (boss.health <= 0) {
+              gameOver(true);
+            }
+            continue;
           }
-          angleDisplay.textContent = `∠ α = ${angleStr}`;
-          angleDisplay.style.display = 'block';
-          
-        } else {
-          // Режим значения функции
-          results = computeFromValue(funcSelect.value, value, currentQuarter);
-          angleDisplay.style.display = 'none';
         }
         
-        resSin.textContent = formatExact(results.sin);
-        resCos.textContent = formatExact(results.cos);
+        // Удаление по времени или за экраном
+        if (b.life <= 0 || b.x < -50 || b.x > W+50 || b.y < -50 || b.y > H+50) {
+          milkBullets.splice(i, 1);
+        }
+      }
+      
+      // Какашки
+      for (let i = poopAttacks.length - 1; i >= 0; i--) {
+        let p = poopAttacks[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
         
-        if (results.tan === Infinity) resTan.textContent = '∞';
-        else if (results.tan === -Infinity) resTan.textContent = '-∞';
-        else resTan.textContent = formatExact(results.tan);
+        // Попадание в игрока
+        if (player.health > 0) {
+          let dist = Math.hypot(p.x - player.x, p.y - player.y);
+          if (dist < player.radius + p.radius) {
+            player.health = Math.max(0, player.health - 12);
+            updateUI();
+            poopAttacks.splice(i, 1);
+            if (player.health <= 0) {
+              gameOver(false);
+            }
+            continue;
+          }
+        }
         
-        if (results.cot === Infinity) resCot.textContent = '∞';
-        else if (results.cot === -Infinity) resCot.textContent = '-∞';
-        else resCot.textContent = formatExact(results.cot);
-        
-      } catch (e) {
-        errorMsgDiv.textContent = e.message;
-        resSin.textContent = resCos.textContent = resTan.textContent = resCot.textContent = '—';
-        angleDisplay.style.display = 'none';
+        if (p.life <= 0 || p.x < -50 || p.x > W+50 || p.y < -50 || p.y > H+50) {
+          poopAttacks.splice(i, 1);
+        }
       }
     }
 
-    calcBtn.addEventListener('click', onCalculate);
+    // --- ОТРИСОВКА (СИЛУЭТЫ, ПИКСЕЛЬНЫЙ СТИЛЬ) ---
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      
+      // Фон с сеткой
+      ctx.strokeStyle = '#3a2a5e';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < W; i += 40) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, H);
+        ctx.strokeStyle = '#2a1a4e';
+        ctx.stroke();
+      }
+      for (let i = 0; i < H; i += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(W, i);
+        ctx.strokeStyle = '#2a1a4e';
+        ctx.stroke();
+      }
+      
+      // Силуэт БОССА (злой)
+      ctx.shadowColor = '#ff00ff';
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = '#4a004a';
+      ctx.beginPath();
+      ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
+      ctx.fill();
+      // Рога
+      ctx.fillStyle = '#3a003a';
+      ctx.beginPath();
+      ctx.arc(boss.x - 15, boss.y - 25, 10, 0, Math.PI*2);
+      ctx.arc(boss.x + 15, boss.y - 25, 10, 0, Math.PI*2);
+      ctx.fill();
+      // Глаза (светящиеся)
+      ctx.shadowBlur = 30;
+      ctx.fillStyle = '#ff0000';
+      ctx.beginPath();
+      ctx.arc(boss.x - 10, boss.y - 5, 7, 0, Math.PI*2);
+      ctx.arc(boss.x + 10, boss.y - 5, 7, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowBlur = 40;
+      ctx.beginPath();
+      ctx.arc(boss.x - 12, boss.y - 8, 3, 0, Math.PI*2);
+      ctx.arc(boss.x + 8, boss.y - 8, 3, 0, Math.PI*2);
+      ctx.fill();
+      
+      // Силуэт ИГРОКА (мальчик)
+      ctx.shadowColor = '#00ccff';
+      ctx.shadowBlur = 25;
+      ctx.fillStyle = '#1a5c9e';
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+      ctx.fill();
+      // Волосы
+      ctx.fillStyle = '#0d3b6e';
+      ctx.beginPath();
+      ctx.arc(player.x - 5, player.y - 18, 8, 0, Math.PI*2);
+      ctx.arc(player.x + 5, player.y - 18, 8, 0, Math.PI*2);
+      ctx.fill();
+      // Глаза
+      ctx.fillStyle = '#aaddff';
+      ctx.beginPath();
+      ctx.arc(player.x - 7, player.y - 4, 5, 0, Math.PI*2);
+      ctx.arc(player.x + 7, player.y - 4, 5, 0, Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(player.x - 7, player.y - 6, 2.5, 0, Math.PI*2);
+      ctx.arc(player.x + 7, player.y - 6, 2.5, 0, Math.PI*2);
+      ctx.fill();
+      
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = 'transparent';
+      
+      // МОЛОКО (овалы с верёвочкой)
+      for (let b of milkBullets) {
+        // Верёвочка
+        ctx.beginPath();
+        ctx.moveTo(b.x - b.vx*2, b.y - b.vy*2);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = '#d4b896';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Овал молока
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 20;
+        ctx.fillStyle = '#f0f8ff';
+        ctx.beginPath();
+        ctx.ellipse(b.x, b.y, 12, 7, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#e6f0fa';
+        ctx.beginPath();
+        ctx.ellipse(b.x-2, b.y-2, 6, 4, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+      
+      // КАКАШКИ
+      for (let p of poopAttacks) {
+        ctx.shadowColor = '#8B4513';
+        ctx.shadowBlur = 20;
+        ctx.fillStyle = '#6b3a1f';
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, 12, 9, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#5a2d15';
+        ctx.beginPath();
+        ctx.ellipse(p.x-3, p.y-3, 6, 5, 0, 0, Math.PI*2);
+        ctx.fill();
+        // Завитки
+        ctx.strokeStyle = '#4a2010';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x+3, p.y-4, 4, 0, Math.PI);
+        ctx.stroke();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    // --- ИГРОВОЙ ЦИКЛ ---
+    function gameTick() {
+      if (!gameActive) return;
+      
+      frameCount++;
+      updatePlayer();
+      updateBossAI();
+      updateProjectiles();
+      
+      if (boss.health <= 0) {
+        gameOver(true);
+        return;
+      }
+      if (player.health <= 0) {
+        gameOver(false);
+        return;
+      }
+      
+      draw();
+      gameLoopId = requestAnimationFrame(gameTick);
+    }
+
+    function gameOver(won) {
+      gameActive = false;
+      if (gameLoopId) {
+        cancelAnimationFrame(gameLoopId);
+      }
+      
+      if (won) {
+        gameOverTitle.textContent = '🏆 ПОБЕДА! 🏆';
+        gameOverMessage.textContent = `БОСС ПОВЕРЖЕН! СЧЁТ: ${score}`;
+      } else {
+        gameOverTitle.textContent = '💀 ПОРАЖЕНИЕ 💀';
+        gameOverMessage.textContent = `ТЕБЯ ЗАБРОСАЛИ... СЧЁТ: ${score}`;
+      }
+      
+      gameOverlay.style.display = 'flex';
+    }
+
+    function startGame() {
+      resetGame();
+      gameActive = true;
+      startScreen.style.display = 'none';
+      gameOverlay.style.display = 'none';
+      frameCount = 0;
+      if (gameLoopId) cancelAnimationFrame(gameLoopId);
+      gameLoopId = requestAnimationFrame(gameTick);
+    }
+
+    // --- ПРИВЯЗКА СОБЫТИЙ ---
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
     
-    // Enter в полях
-    [sqrtInput, multiplierInput, piMultiplierInput, degreesInput].forEach(i => {
-      i.addEventListener('keypress', e => { 
-        if(e.key === 'Enter') onCalculate(); 
-      });
-    });
+    startBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
     
-    window.addEventListener('DOMContentLoaded', () => {
-      setActiveQuarter(1);
-      onCalculate();
-    });
+    // Начальная отрисовка
+    resetGame();
+    draw();
   })();
 </script>
 </body>
